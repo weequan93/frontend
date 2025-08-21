@@ -18,6 +18,8 @@ const FILTER_PARAM_FROM = 'age_from';
 const FILTER_PARAM_TO = 'age_to';
 const FILTER_PARAM_AGE = 'age';
 
+const MAX_DAYS = 31;
+
 const defaultValue = { age: '', from: '', to: '' } as const;
 type AgeFromToValue = { age: AdvancedFilterAge | ''; from: string; to: string };
 
@@ -64,12 +66,44 @@ const AgeFilter = ({ value = defaultValue, handleFilterChange, onClose }: Props)
     to: value.age ? '' : (value.to || ''),
   });
 
-  const handleFromChange = React.useCallback((newValue: string) => {
-    setCurrentValue(prev => ({ age: '', to: prev.to, from: newValue }));
+  const clampToMaxDays = (from: string, to: string) => {
+    if (!from || !to) return { from, to };
+    const fromDate = dayjs(from).startOf('day');
+    let toDate = dayjs(to).endOf('day');
+    if (toDate.diff(fromDate, 'day') > MAX_DAYS) {
+      toDate = fromDate.add(MAX_DAYS, 'day').endOf('day');
+    }
+    return { from: fromDate.toISOString(), to: toDate.toISOString() };
+  };
+
+  const handleFromChange = React.useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setCurrentValue(prev => {
+      const newFrom = event.target.value;
+      let newTo = prev.to;
+      if (newTo) {
+        const fromDate = dayjs(newFrom);
+        const toDate = dayjs(newTo);
+        if (toDate.diff(fromDate, 'day') > MAX_DAYS) {
+          newTo = fromDate.add(MAX_DAYS, 'day').format('YYYY-MM-DD');
+        }
+      }
+      return { age: '', to: newTo, from: newFrom };
+    });
   }, []);
 
-  const handleToChange = React.useCallback((newValue: string) => {
-    setCurrentValue(prev => ({ age: '', from: prev.from, to: newValue }));
+  const handleToChange = React.useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setCurrentValue(prev => {
+      const newTo = event.target.value;
+      let newFrom = prev.from;
+      if (newFrom) {
+        const fromDate = dayjs(newFrom);
+        const toDate = dayjs(newTo);
+        if (toDate.diff(fromDate, 'day') > MAX_DAYS) {
+          newFrom = toDate.subtract(MAX_DAYS, 'day').format('YYYY-MM-DD');
+        }
+      }
+      return { age: '', from: newFrom, to: newTo };
+    });
   }, []);
 
   const onPresetChange = React.useCallback((age: AdvancedFilterAge) => {
@@ -90,14 +124,21 @@ const AgeFilter = ({ value = defaultValue, handleFilterChange, onClose }: Props)
       handleFilterChange(FILTER_PARAM_AGE, undefined);
       return;
     }
-    const from = currentValue.age ?
-      dayjs((dayjs().valueOf() - getDurationFromAge(currentValue.age))).toISOString() :
-      dayjs(currentValue.from || undefined).startOf('day').toISOString();
+    let from: string;
+    let to: string;
+    if (currentValue.age) {
+      from = dayjs((dayjs().valueOf() - getDurationFromAge(currentValue.age))).toISOString();
+      to = dayjs().toISOString();
+    } else {
+      const clamped = clampToMaxDays(currentValue.from, currentValue.to);
+      from = clamped.from;
+      to = clamped.to;
+    }
     handleFilterChange(FILTER_PARAM_FROM, from);
-    const to = currentValue.age ? dayjs().toISOString() : dayjs(currentValue.to || undefined).endOf('day').toISOString();
     handleFilterChange(FILTER_PARAM_TO, to);
     handleFilterChange(FILTER_PARAM_AGE, currentValue.age);
-  }, [ handleFilterChange, currentValue ]);
+  }, [handleFilterChange, currentValue]);
+  
 
   return (
     <TableColumnFilter
@@ -118,18 +159,23 @@ const AgeFilter = ({ value = defaultValue, handleFilterChange, onClose }: Props)
         </PopoverCloseTriggerWrapper>
       </Flex>
       <Flex mt={ 3 }>
-        <DateInput
-          value={ currentValue.age ? '' : currentValue.from }
-          onChange={ handleFromChange }
+        <Input
+          value={currentValue.age ? '' : dayjs(currentValue.from).format('YYYY-MM-DD')}
+          onChange={handleFromChange}
           placeholder="From"
-          max={ dayjs().format('YYYY-MM-DD') }
+          type="date"
+          size="xs"
+          max={currentValue.to ? dayjs(currentValue.to).subtract(MAX_DAYS, 'day').format('YYYY-MM-DD') : undefined}
         />
-        <Text mx={ 3 }>{ ndash }</Text>
-        <DateInput
-          value={ currentValue.age ? '' : currentValue.to }
-          onChange={ handleToChange }
+        <Text mx={3}>{ndash}</Text>
+        <Input
+          value={currentValue.age ? '' : dayjs(currentValue.to).format('YYYY-MM-DD')}
+          onChange={handleToChange}
           placeholder="To"
-          max={ dayjs().format('YYYY-MM-DD') }
+          type="date"
+          size="xs"
+          min={currentValue.from ? dayjs(currentValue.from).format('YYYY-MM-DD') : undefined}
+          max={currentValue.from ? dayjs(currentValue.from).add(MAX_DAYS, 'day').format('YYYY-MM-DD') : undefined}
         />
       </Flex>
     </TableColumnFilter>

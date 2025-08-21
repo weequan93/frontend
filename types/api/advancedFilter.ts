@@ -27,7 +27,7 @@ export type AdvancedFilterParams = {
 export const ADVANCED_FILTER_TYPES = [ 'coin_transfer', 'ERC-20', 'ERC-404', 'ERC-721', 'ERC-1155' ] as const;
 export type AdvancedFilterType = typeof ADVANCED_FILTER_TYPES[number];
 
-export const ADVANCED_FILTER_AGES = [ '1h', '24h', '7d', '1m', '3m', '6m' ] as const;
+export const ADVANCED_FILTER_AGES = [ '5m', '1h','12h', '24h', '7d', '15d', '1M' ] as const;
 export type AdvancedFilterAge = typeof ADVANCED_FILTER_AGES[number];
 
 export type AdvancedFilterResponseItem = {
