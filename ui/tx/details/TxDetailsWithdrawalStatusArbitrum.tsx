@@ -85,7 +85,7 @@ const TxDetailsWithdrawalStatusArbitrum = ({ data }: Props) => {
       <DetailedInfo.ItemLabel
         hint="The hash of the transaction that originated the message from the base layer"
       >
-        Originating L1 txn hash
+        Originating L2 txn hash
       </DetailedInfo.ItemLabel>
       <DetailedInfo.ItemValue>
         { data.arbitrum.message_related_info.associated_l1_transaction_hash ?

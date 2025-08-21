@@ -41,7 +41,7 @@ const ZkEvmL2WithdrawalsListItem = ({ item, isLoading }: Props) => {
         </Skeleton>
       </ListItemMobileGrid.Value>
 
-      <ListItemMobileGrid.Label isLoading={ isLoading }>L2 txn hash</ListItemMobileGrid.Label>
+      <ListItemMobileGrid.Label isLoading={isLoading}>L3 txn hash</ListItemMobileGrid.Label>
       <ListItemMobileGrid.Value>
         <TxEntity
           isLoading={ isLoading }
@@ -60,7 +60,7 @@ const ZkEvmL2WithdrawalsListItem = ({ item, isLoading }: Props) => {
         />
       </ListItemMobileGrid.Value>
 
-      <ListItemMobileGrid.Label isLoading={ isLoading }>L1 txn hash</ListItemMobileGrid.Label>
+      <ListItemMobileGrid.Label isLoading={isLoading}>L2 txn hash</ListItemMobileGrid.Label>
       <ListItemMobileGrid.Value>
         { item.l1_transaction_hash ? (
           <TxEntityL1

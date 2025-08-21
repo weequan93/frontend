@@ -20,16 +20,16 @@ const ArbitrumL2MessagesTable = ({ items, direction, top, isLoading }: Props) =>
     <TableRoot tableLayout="auto" minW="950px">
       <TableHeaderSticky top={ top }>
         <TableRow>
-          { direction === 'to-rollup' && <TableColumnHeader>L1 block</TableColumnHeader> }
+          {direction === 'to-rollup' && <TableColumnHeader> L2 block</TableColumnHeader> }
           { direction === 'from-rollup' && <TableColumnHeader>From</TableColumnHeader> }
           <TableColumnHeader>Message #</TableColumnHeader>
-          <TableColumnHeader>L2 transaction</TableColumnHeader>
+          <TableColumnHeader>L3 transaction</TableColumnHeader>
           <TableColumnHeader>
             Timestamp
             <TimeFormatToggle/>
           </TableColumnHeader>
           <TableColumnHeader>Status</TableColumnHeader>
-          <TableColumnHeader>L1 transaction</TableColumnHeader>
+          <TableColumnHeader>L2 transaction</TableColumnHeader>
         </TableRow>
       </TableHeaderSticky>
       <TableBody>

@@ -38,7 +38,7 @@ const OptimisticL2TxnBatchBlobCelestia = ({ blobs, isLoading }: Props) => {
             <GridItem whiteSpace="normal" colSpan={ 2 }>
               { dayjs(blob.l1_timestamp).fromNow() } | { dayjs(blob.l1_timestamp).format('llll') }
             </GridItem>
-            <GridItem fontWeight={ 600 }>L1 txn hash</GridItem>
+            <GridItem fontWeight={600}>L2 txn hash</GridItem>
             <GridItem overflow="hidden" colSpan={ 2 }>
               <TxEntityL1 hash={ blob.l1_transaction_hash } noIcon noCopy={ false }/>
             </GridItem>

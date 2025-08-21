@@ -35,7 +35,7 @@ const ArbitrumL2MessagesListItem = ({ item, isLoading, direction }: Props) => {
 
       { direction === 'to-rollup' && (
         <>
-          <ListItemMobileGrid.Label isLoading={ isLoading }>L1 block</ListItemMobileGrid.Label>
+          <ListItemMobileGrid.Label isLoading={isLoading}>L2 block</ListItemMobileGrid.Label>
           <ListItemMobileGrid.Value>
             { item.origination_transaction_block_number ? (
               <BlockEntityL1
@@ -69,7 +69,7 @@ const ArbitrumL2MessagesListItem = ({ item, isLoading, direction }: Props) => {
         </Skeleton>
       </ListItemMobileGrid.Value>
 
-      <ListItemMobileGrid.Label isLoading={ isLoading }>L2 transaction</ListItemMobileGrid.Label>
+      <ListItemMobileGrid.Label isLoading={isLoading}>L3 transaction</ListItemMobileGrid.Label>
       <ListItemMobileGrid.Value>
         { l2TxHash ? (
           <TxEntity
@@ -104,7 +104,7 @@ const ArbitrumL2MessagesListItem = ({ item, isLoading, direction }: Props) => {
           <ArbitrumL2MessageStatus status={ item.status } isLoading={ isLoading }/> }
       </ListItemMobileGrid.Value>
 
-      <ListItemMobileGrid.Label isLoading={ isLoading }>L1 transaction</ListItemMobileGrid.Label>
+      <ListItemMobileGrid.Label isLoading={isLoading}>L2 transaction</ListItemMobileGrid.Label>
       <ListItemMobileGrid.Value>
         { l1TxHash ? (
           <TxEntityL1

@@ -99,11 +99,11 @@ const LatestDepositsItem = ({ item, isLoading }: ItemProps) => {
           </Flex>
           <Grid gridTemplateColumns="56px auto">
             <Skeleton loading={ isLoading } my="5px" w="fit-content">
-              L1 txn
+            L2 txn
             </Skeleton>
             { l1TxLink }
             <Skeleton loading={ isLoading } my="3px" w="fit-content">
-              L2 txn
+            L3 txn
             </Skeleton>
             { l2TxLink }
           </Grid>
@@ -115,7 +115,7 @@ const LatestDepositsItem = ({ item, isLoading }: ItemProps) => {
       <Grid width="100%" columnGap={ 4 } rowGap={ 2 } templateColumns="max-content max-content auto" w="100%">
         { l1BlockLink }
         <Skeleton loading={ isLoading } w="fit-content" h="fit-content" my="5px">
-          L1 txn
+        L2 txn
         </Skeleton>
         { l1TxLink }
         { item.timestamp ? (
@@ -130,7 +130,7 @@ const LatestDepositsItem = ({ item, isLoading }: ItemProps) => {
           />
         ) : <GridItem/> }
         <Skeleton loading={ isLoading } w="fit-content" h="fit-content" my="2px">
-          L2 txn
+        L3 txn
         </Skeleton>
         { l2TxLink }
       </Grid>

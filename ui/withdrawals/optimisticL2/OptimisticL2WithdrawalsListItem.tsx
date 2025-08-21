@@ -46,7 +46,7 @@ const OptimisticL2WithdrawalsListItem = ({ item, isLoading }: Props) => {
         </>
       ) }
 
-      <ListItemMobileGrid.Label isLoading={ isLoading }>L2 txn hash</ListItemMobileGrid.Label>
+      <ListItemMobileGrid.Label isLoading={isLoading}>L3 txn hash</ListItemMobileGrid.Label>
       <ListItemMobileGrid.Value>
         <TxEntity
           isLoading={ isLoading }
@@ -77,7 +77,7 @@ const OptimisticL2WithdrawalsListItem = ({ item, isLoading }: Props) => {
 
       { item.l1_transaction_hash && (
         <>
-          <ListItemMobileGrid.Label isLoading={ isLoading }>L1 txn hash</ListItemMobileGrid.Label>
+          <ListItemMobileGrid.Label isLoading={isLoading}>L2 txn hash</ListItemMobileGrid.Label>
           <ListItemMobileGrid.Value>
             <TxEntityL1
               isLoading={ isLoading }

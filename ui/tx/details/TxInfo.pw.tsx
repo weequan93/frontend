@@ -121,7 +121,7 @@ test('stability customization', async({ render, page, mockEnvs, mockAssetRespons
   });
 });
 
-test('arbitrum L1 status', async({ render, mockEnvs }) => {
+test('arbitrum L2 status', async({ render, mockEnvs }) => {
   await mockEnvs(ENVS_MAP.arbitrumRollup);
   const component = await render(<TxInfo data={ txMock.arbitrumTxn } isLoading={ false }/>);
 

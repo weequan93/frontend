@@ -66,7 +66,7 @@ const ArbitrumL2TxnBatchDetails = ({ query }: Props) => {
     >
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Batch number indicates the length of batches produced by grouping L2 blocks to be proven on L1"
+        hint="Batch number indicates the length of batches produced by grouping L3 blocks to be proven on L2"
       >
         Txn batch number
       </DetailedInfo.ItemLabel>
@@ -86,7 +86,7 @@ const ArbitrumL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Date and time at which batch is submitted to L1"
+        hint="Date and time at which batch is submitted to L2"
       >
         Timestamp
       </DetailedInfo.ItemLabel>
@@ -111,7 +111,7 @@ const ArbitrumL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Number of L2 blocks in this batch"
+        hint="Number of L3 blocks in this batch"
       >
         Blocks
       </DetailedInfo.ItemLabel>
@@ -123,9 +123,9 @@ const ArbitrumL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Hash of L1 transaction in which transactions was committed"
+        hint="Hash of L2 transaction in which transactions was committed"
       >
-        L1 transaction hash
+        L2 transaction hash
       </DetailedInfo.ItemLabel>
       <DetailedInfo.ItemValue>
         <TxEntityL1
@@ -137,9 +137,9 @@ const ArbitrumL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Heigh of L1 block which includes L1 transactions"
+        hint="Heigh of L2 block which includes L2 transactions"
       >
-        L1 block
+        L2 block
       </DetailedInfo.ItemLabel>
       <DetailedInfo.ItemValue>
         <BlockEntityL1

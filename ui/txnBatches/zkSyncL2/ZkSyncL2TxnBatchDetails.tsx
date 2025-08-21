@@ -65,7 +65,7 @@ const ZkSyncL2TxnBatchDetails = ({ query }: Props) => {
       templateColumns={{ base: 'minmax(0, 1fr)', lg: 'minmax(min-content, 200px) minmax(0, 1fr)' }}
     >
       <DetailedInfo.ItemLabel
-        hint="Batch number indicates the length of batches produced by grouping L2 blocks to be proven on Ethereum."
+        hint="Batch number indicates the length of batches produced by grouping L3 blocks to be proven on Ethereum."
         isLoading={ isPlaceholderData }
       >
         Txn batch number
@@ -126,7 +126,7 @@ const ZkSyncL2TxnBatchDetails = ({ query }: Props) => {
         <GridItem colSpan={{ base: undefined, lg: 2 }} mt={{ base: 1, lg: 4 }}/>
 
         <DetailedInfo.ItemLabel
-          hint="L1 batch root is a hash that summarizes batch data and submitted to the L1"
+          hint="L2 batch root is a hash that summarizes batch data and submitted to the L2"
         >
           Root hash
         </DetailedInfo.ItemLabel>
@@ -139,9 +139,9 @@ const ZkSyncL2TxnBatchDetails = ({ query }: Props) => {
         </DetailedInfo.ItemValue>
 
         <DetailedInfo.ItemLabel
-          hint="Gas price for the batch settlement transaction on L1"
+          hint="Gas price for the batch settlement transaction on L2"
         >
-          L1 gas price
+          L2 gas price
         </DetailedInfo.ItemLabel>
         <DetailedInfo.ItemValue multiRow>
           <Text mr={ 1 }>{ BigNumber(data.l1_gas_price).dividedBy(WEI).toFixed() } { currencyUnits.ether }</Text>
@@ -151,7 +151,7 @@ const ZkSyncL2TxnBatchDetails = ({ query }: Props) => {
         <DetailedInfo.ItemLabel
           hint='The gas price below which the "baseFee" of the batch should not fall'
         >
-          L2 fair gas price
+          L3 fair gas price
         </DetailedInfo.ItemLabel>
         <DetailedInfo.ItemValue multiRow>
           <Text mr={ 1 }>{ BigNumber(data.l2_fair_gas_price).dividedBy(WEI).toFixed() } { currencyUnits.ether }</Text>

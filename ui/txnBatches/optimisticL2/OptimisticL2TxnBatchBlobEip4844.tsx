@@ -28,7 +28,7 @@ const OptimisticL2TxnBatchBlobEip4844 = ({ blobs, isLoading }: Props) => {
             <GridItem whiteSpace="normal">
               { dayjs(blob.l1_timestamp).fromNow() } | { dayjs(blob.l1_timestamp).format('llll') }
             </GridItem>
-            <GridItem fontWeight={ 600 }>L1 txn hash</GridItem>
+            <GridItem fontWeight={600}>L2 txn hash</GridItem>
             <GridItem overflow="hidden">
               <TxEntityL1 hash={ blob.l1_transaction_hash } noIcon noCopy={ false }/>
             </GridItem>

@@ -29,7 +29,7 @@ const parentChain: ParentChain | undefined = (() => {
   };
 })();
 
-const title = 'Rollup (L2) chain';
+const title = 'Rollup (L3) chain';
 
 const config: Feature<{
   type: RollupType;

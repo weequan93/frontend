@@ -19,14 +19,14 @@ const ScrollL2WithdrawalsTable = ({ items, top, isLoading }: Props) => {
     <TableRoot tableLayout="auto" minW="950px">
       <TableHeaderSticky top={ top }>
         <TableRow>
-          <TableColumnHeader>L2 block</TableColumnHeader>
+          <TableColumnHeader>L3 block</TableColumnHeader>
           <TableColumnHeader>Index</TableColumnHeader>
-          <TableColumnHeader>L2 txn hash</TableColumnHeader>
+          <TableColumnHeader>L3 txn hash</TableColumnHeader>
           <TableColumnHeader>
             Timestamp
             <TimeFormatToggle/>
           </TableColumnHeader>
-          <TableColumnHeader>L1 txn hash</TableColumnHeader>
+          <TableColumnHeader>L2 txn hash</TableColumnHeader>
           <TableColumnHeader isNumeric>{ `Value ${ config.chain.currency.symbol }` }</TableColumnHeader>
         </TableRow>
       </TableHeaderSticky>

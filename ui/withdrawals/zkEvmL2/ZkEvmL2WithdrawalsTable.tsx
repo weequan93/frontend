@@ -20,12 +20,12 @@ const ZkEvmL2DepositsTable = ({ items, top, isLoading }: Props) => {
         <TableRow>
           <TableColumnHeader>Block</TableColumnHeader>
           <TableColumnHeader>Index</TableColumnHeader>
-          <TableColumnHeader>L2 txn hash</TableColumnHeader>
+          <TableColumnHeader>L3 txn hash</TableColumnHeader>
           <TableColumnHeader>
             Timestamp
             <TimeFormatToggle/>
           </TableColumnHeader>
-          <TableColumnHeader>L1 txn hash</TableColumnHeader>
+          <TableColumnHeader>L2 txn hash</TableColumnHeader>
           <TableColumnHeader isNumeric>Value</TableColumnHeader>
           <TableColumnHeader>Token</TableColumnHeader>
         </TableRow>

@@ -171,7 +171,7 @@ const Stats = () => {
       apiData?.last_output_root_size && {
         id: 'latest_l1_state_batch' as const,
         icon: 'txn_batches_slim' as const,
-        label: 'Latest L1 state batch',
+        label: 'Latest L2 state batch',
         value: apiData?.last_output_root_size,
         href: { pathname: '/batches' as const },
         isLoading,

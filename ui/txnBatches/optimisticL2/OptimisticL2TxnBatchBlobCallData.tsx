@@ -19,7 +19,7 @@ const OptimisticL2TxnBatchBlobCallData = ({ l1TxHashes, l1Timestamp, isLoading }
       <GridItem whiteSpace="normal">
         { dayjs(l1Timestamp).fromNow() } | { dayjs(l1Timestamp).format('llll') }
       </GridItem>
-      <GridItem fontWeight={ 600 }>L1 txn hash{ l1TxHashes.length > 1 ? 'es' : '' }</GridItem>
+      <GridItem fontWeight={600}>L2 txn hash{ l1TxHashes.length > 1 ? 'es' : '' }</GridItem>
       <GridItem overflow="hidden" display="flex" flexDir="column" rowGap={ 2 }>
         { l1TxHashes.map((hash) => <TxEntityL1 key={ hash } hash={ hash } noIcon noCopy={ false }/>) }
       </GridItem>

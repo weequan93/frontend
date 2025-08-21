@@ -15,7 +15,7 @@ test('default view +@mobile +@dark-mode', async({ render, mockApiResponse }) => 
   await expect(component).toHaveScreenshot();
 });
 
-test('L2 view', async({ render, mockEnvs, mockApiResponse }) => {
+test('L3 view', async({ render, mockEnvs, mockApiResponse }) => {
   await mockEnvs(ENVS_MAP.optimisticRollup);
   await mockApiResponse('general:stats', statsMock.base);
   await mockApiResponse('general:homepage_blocks', [ blockMock.base, blockMock.base2 ]);

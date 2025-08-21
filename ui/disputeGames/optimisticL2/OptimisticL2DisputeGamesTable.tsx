@@ -21,7 +21,7 @@ const OptimisticL2DisputeGamesTable = ({ items, top, isLoading }: Props) => {
           <TableColumnHeader>Index</TableColumnHeader>
           <TableColumnHeader>Game type</TableColumnHeader>
           <TableColumnHeader>Address</TableColumnHeader>
-          <TableColumnHeader>L2 block #</TableColumnHeader>
+          <TableColumnHeader>L3 block #</TableColumnHeader>
           <TableColumnHeader>
             Timestamp
             <TimeFormatToggle/>

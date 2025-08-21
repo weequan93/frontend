@@ -18,9 +18,9 @@ const TransactionsHome = () => {
     const tabs = [
       { id: 'txn', title: 'Latest txn', component: <LatestTxs/> },
       rollupFeature.isEnabled && rollupFeature.type === 'optimistic' &&
-        { id: 'deposits', title: 'Deposits (L1→L2 txn)', component: <LatestOptimisticDeposits/> },
+      { id: 'deposits', title: 'Deposits (L1→L3 txn)', component: <LatestOptimisticDeposits/> },
       rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' &&
-        { id: 'deposits', title: 'Deposits (L1→L2 txn)', component: <LatestArbitrumDeposits/> },
+      { id: 'deposits', title: 'Deposits (L1→L3 txn)', component: <LatestArbitrumDeposits/> },
       isAuth && { id: 'watchlist', title: 'Watch list', component: <LatestWatchlistTxs/> },
     ].filter(Boolean);
     return (

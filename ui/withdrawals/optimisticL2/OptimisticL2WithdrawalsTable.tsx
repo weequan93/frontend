@@ -20,13 +20,13 @@ const OptimisticL2WithdrawalsTable = ({ items, top, isLoading }: Props) => {
         <TableRow>
           <TableColumnHeader>Msg nonce</TableColumnHeader>
           <TableColumnHeader>From</TableColumnHeader>
-          <TableColumnHeader>L2 txn hash</TableColumnHeader>
+          <TableColumnHeader>L3 txn hash</TableColumnHeader>
           <TableColumnHeader>
             Timestamp
             <TimeFormatToggle/>
           </TableColumnHeader>
           <TableColumnHeader>Status</TableColumnHeader>
-          <TableColumnHeader>L1 txn hash</TableColumnHeader>
+          <TableColumnHeader>L2 txn hash</TableColumnHeader>
           <TableColumnHeader>Time left</TableColumnHeader>
         </TableRow>
       </TableHeaderSticky>

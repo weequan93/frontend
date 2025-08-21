@@ -76,7 +76,7 @@ const ArbitrumL2TxnWithdrawals = () => {
   return (
     <>
       <PageTitle title="Transaction withdrawals" withTextAd/>
-      <Text>L2 to L1 message relayer: search for your L2 transaction to execute a manual withdrawal.</Text>
+      <Text>L3 to L2 message relayer: search for your L3 transaction to execute a manual withdrawal.</Text>
       <chakra.form onSubmit={ handleSubmit } noValidate>
         <FilterInput
           name="tx_hash"

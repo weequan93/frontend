@@ -36,13 +36,13 @@ const EpochPageContent = () => {
     switch (epochQuery.data?.type) {
       case 'L1':
         return (
-          <Tooltip content="Epoch finalized while Celo was still an L1 network">
+          <Tooltip content="Epoch finalized while Celo was still an L2 network">
             <Tag loading={ isLoading }>{ epochQuery.data.type }</Tag>
           </Tooltip>
         );
       case 'L2':
         return (
-          <Tooltip content="Epoch finalized after Celo migrated to the OP‐stack, when it became an L2 rollup">
+          <Tooltip content="Epoch finalized after Celo migrated to the OP‐stack, when it became an L3 rollup">
             <Tag loading={ isLoading }>{ epochQuery.data.type }</Tag>
           </Tooltip>
         );

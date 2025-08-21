@@ -23,10 +23,10 @@ export const TxInfoScrollFees = ({ data, isLoading }: Props) => {
         <>
           <DetailedInfo.ItemLabel
 
-            hint="L1 fee that pays for rollup costs"
+            hint="L2 fee that pays for rollup costs"
             isLoading={ isLoading }
           >
-            L1 data fee
+            L2 data fee
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <CurrencyValue
@@ -42,7 +42,7 @@ export const TxInfoScrollFees = ({ data, isLoading }: Props) => {
       { data.scroll?.l2_fee !== undefined && (
         <>
           <DetailedInfo.ItemLabel
-            hint="L2 execution fee"
+            hint="L3 execution fee"
             isLoading={ isLoading }
           >
             Execution fee
@@ -64,7 +64,7 @@ export const TxInfoScrollFees = ({ data, isLoading }: Props) => {
             hint="Commitment scalar"
             isLoading={ isLoading }
           >
-            L1 commit scalar
+            L2 commit scalar
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <CurrencyValue
@@ -83,7 +83,7 @@ export const TxInfoScrollFees = ({ data, isLoading }: Props) => {
             hint="Additional gas overhead of a data commitment transaction"
             isLoading={ isLoading }
           >
-            L1 Fee Overhead
+            L2 Fee Overhead
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <Skeleton loading={ isLoading }>
@@ -100,10 +100,10 @@ export const TxInfoScrollFees = ({ data, isLoading }: Props) => {
       { (data.scroll?.l1_base_fee !== undefined || data.scroll?.l1_fee_scalar !== undefined) && (
         <>
           <DetailedInfo.ItemLabel
-            hint="L1 gas fees"
+            hint="L2 gas fees"
             isLoading={ isLoading }
           >
-            L1 gas fees
+            L2 gas fees
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             { data.scroll?.l1_base_fee !== undefined && (
@@ -125,10 +125,10 @@ export const TxInfoScrollFees = ({ data, isLoading }: Props) => {
       { (data.scroll?.l1_blob_base_fee !== undefined || data.scroll?.l1_fee_blob_scalar !== undefined) && (
         <>
           <DetailedInfo.ItemLabel
-            hint="L1 blob fees"
+            hint="L2 blob fees"
             isLoading={ isLoading }
           >
-            L1 blob fees
+            L2 blob fees
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             { data.scroll?.l1_blob_base_fee !== undefined && (

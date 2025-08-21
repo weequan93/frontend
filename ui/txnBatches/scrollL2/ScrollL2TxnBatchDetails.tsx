@@ -60,7 +60,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
     >
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Batch number indicates the length of batches produced by grouping L2 blocks to be proven on L1"
+        hint="Batch number indicates the length of batches produced by grouping L3 blocks to be proven on L2"
       >
         Txn batch number
       </DetailedInfo.ItemLabel>
@@ -100,7 +100,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Date and time at which batch is finalized to L1"
+        hint="Date and time at which batch is finalized to L2"
       >
         Finalized timestamp
       </DetailedInfo.ItemLabel>
@@ -129,7 +129,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Number of L2 blocks in this batch"
+        hint="Number of L3 blocks in this batch"
       >
         Blocks
       </DetailedInfo.ItemLabel>
@@ -141,7 +141,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Date and time at which batch is committed to L1"
+        hint="Date and time at which batch is committed to L2"
       >
         Committed timestamp
       </DetailedInfo.ItemLabel>
@@ -154,7 +154,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Hash of L1 transaction this batch was committed in"
+        hint="Hash of L2 transaction this batch was committed in"
       >
         Committed transaction hash
       </DetailedInfo.ItemLabel>
@@ -168,7 +168,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="L1 block that includes transaction with this batch commitment"
+        hint="L2 block that includes transaction with this batch commitment"
       >
         Committed block
       </DetailedInfo.ItemLabel>
@@ -181,7 +181,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Hash of L1 transaction this batch was finalized in"
+        hint="Hash of L2 transaction this batch was finalized in"
       >
         Finalized transaction hash
       </DetailedInfo.ItemLabel>
@@ -197,7 +197,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="L1 block that includes transaction with this batch finalization data"
+        hint="L2 block that includes transaction with this batch finalization data"
       >
         Finalized block
       </DetailedInfo.ItemLabel>

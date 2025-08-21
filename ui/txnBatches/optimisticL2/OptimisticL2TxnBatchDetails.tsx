@@ -61,7 +61,7 @@ const OptimisticL2TxnBatchDetails = ({ query }: Props) => {
     >
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Batch ID indicates the length of batches produced by grouping L2 blocks to be proven on L1"
+        hint="Batch ID indicates the length of batches produced by grouping L3 blocks to be proven on L2"
       >
         Batch ID
       </DetailedInfo.ItemLabel>
@@ -81,7 +81,7 @@ const OptimisticL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Date and time at which batch is submitted to L1"
+        hint="Date and time at which batch is submitted to L2"
       >
         Timestamp
       </DetailedInfo.ItemLabel>
@@ -109,7 +109,7 @@ const OptimisticL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Number of L2 blocks in this batch"
+        hint="Number of L3 blocks in this batch"
       >
         Blocks
       </DetailedInfo.ItemLabel>

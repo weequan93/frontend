@@ -194,7 +194,7 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
         {
           rollupFeature.isEnabled &&
           (rollupFeature.type === 'zkEvm' || rollupFeature.type === 'zkSync' || rollupFeature.type === 'arbitrum' || rollupFeature.type === 'scroll') ?
-            'L2 status and method' :
+            'L3 status and method' :
             'Status and method'
         }
       </DetailedInfo.ItemLabel>
@@ -244,7 +244,7 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
       { data.zkevm_status && !config.UI.views.tx.hiddenFields?.L1_status && (
         <>
           <DetailedInfo.ItemLabel
-            hint="Status of the transaction confirmation path to L1"
+            hint="Status of the transaction confirmation path to L2"
             isLoading={ isLoading }
           >
             Confirmation status
@@ -258,10 +258,10 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
       { data.arbitrum?.status && !config.UI.views.tx.hiddenFields?.L1_status && (
         <>
           <DetailedInfo.ItemLabel
-            hint="Status of the transaction confirmation path to L1"
+            hint="Status of the transaction confirmation path to L2"
             isLoading={ isLoading }
           >
-            L1 status
+            L2 status
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <VerificationSteps
@@ -293,7 +293,7 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
             hint="Status is the short interpretation of the batch lifecycle"
             isLoading={ isLoading }
           >
-            L1 status
+            L2 status
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <VerificationSteps steps={ ZKSYNC_L2_TX_BATCH_STATUSES } currentStep={ data.zksync.status } isLoading={ isLoading }/>
@@ -539,7 +539,7 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
           { data.arbitrum?.commitment_transaction.hash && (
             <>
               <DetailedInfo.ItemLabel
-                hint="L1 transaction containing this batch commitment"
+                hint="L2 transaction containing this batch commitment"
                 isLoading={ isLoading }
               >
                 Commitment tx
@@ -553,7 +553,7 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
           { data.arbitrum?.confirmation_transaction.hash && (
             <>
               <DetailedInfo.ItemLabel
-                hint="L1 transaction containing confirmation of this batch"
+                hint="L2 transaction containing confirmation of this batch"
                 isLoading={ isLoading }
               >
                 Confirmation tx
@@ -645,7 +645,7 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
       { rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' && data.arbitrum && (
         <>
           <DetailedInfo.ItemLabel
-            hint="Fee paid to the poster for L1 resources"
+            hint="Fee paid to the poster for L2 resources"
             isLoading={ isLoading }
           >
             Poster fee
@@ -661,7 +661,7 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
           </DetailedInfo.ItemValue>
 
           <DetailedInfo.ItemLabel
-            hint="Fee paid to the network for L2 resources"
+            hint="Fee paid to the network for L3 resources"
             isLoading={ isLoading }
           >
             Network fee
@@ -698,10 +698,10 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
       { rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' && data.arbitrum && data.gas_used && (
         <>
           <DetailedInfo.ItemLabel
-            hint="L2 gas set aside for L1 data charges"
+            hint="L3 gas set aside for L2 data charges"
             isLoading={ isLoading }
           >
-            Gas used for L1
+            Gas used for L2
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <Skeleton loading={ isLoading }>{ BigNumber(data.arbitrum.gas_used_for_l1 || 0).toFormat() }</Skeleton>
@@ -714,10 +714,10 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
           </DetailedInfo.ItemValue>
 
           <DetailedInfo.ItemLabel
-            hint="L2 gas spent on L2 resources"
+            hint="L3 gas spent on L3 resources"
             isLoading={ isLoading }
           >
-            Gas used for L2
+            Gas used for L3
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <Skeleton loading={ isLoading }>{ BigNumber(data.arbitrum.gas_used_for_l2 || 0).toFormat() }</Skeleton>
@@ -734,10 +734,10 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
       { data.scroll?.l1_gas_used !== undefined && (
         <>
           <DetailedInfo.ItemLabel
-            hint="Total gas used on L1"
+            hint="Total gas used on L2"
             isLoading={ isLoading }
           >
-            L1 Gas used
+            L2 Gas used
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <Skeleton loading={ isLoading }>{ BigNumber(data.scroll?.l1_gas_used || 0).toFormat() }</Skeleton>
@@ -790,10 +790,10 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
           { data.l1_gas_used && (
             <>
               <DetailedInfo.ItemLabel
-                hint="L1 gas used by transaction"
+                hint="L2 gas used by transaction"
                 isLoading={ isLoading }
               >
-                L1 gas used by txn
+                L2 gas used by txn
               </DetailedInfo.ItemLabel>
               <DetailedInfo.ItemValue>
                 <Text>{ BigNumber(data.l1_gas_used).toFormat() }</Text>
@@ -804,10 +804,10 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
           { data.l1_gas_price && (
             <>
               <DetailedInfo.ItemLabel
-                hint="L1 gas price"
+                hint="L2 gas price"
                 isLoading={ isLoading }
               >
-                L1 gas price
+                L2 gas price
               </DetailedInfo.ItemLabel>
               <DetailedInfo.ItemValue multiRow>
                 <Text mr={ 1 }>{ BigNumber(data.l1_gas_price).dividedBy(WEI).toFixed() } { currencyUnits.ether }</Text>
@@ -820,10 +820,10 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
             <>
               <DetailedInfo.ItemLabel
                 // eslint-disable-next-line max-len
-                hint={ `L1 Data Fee which is used to cover the L1 "security" cost from the batch submission mechanism. In combination with L2 execution fee, L1 fee makes the total amount of fees that a transaction pays.` }
+                hint={ `L2 Data Fee which is used to cover the L2 "security" cost from the batch submission mechanism. In combination with L3 execution fee, L2 fee makes the total amount of fees that a transaction pays.` }
                 isLoading={ isLoading }
               >
-                L1 fee
+                L2 fee
               </DetailedInfo.ItemLabel>
               <DetailedInfo.ItemValue multiRow>
                 <CurrencyValue
@@ -840,10 +840,10 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
           { data.l1_fee_scalar && (
             <>
               <DetailedInfo.ItemLabel
-                hint="A Dynamic overhead (fee scalar) premium, which serves as a buffer in case L1 prices rapidly increase."
+                hint="A Dynamic overhead (fee scalar) premium, which serves as a buffer in case L2 prices rapidly increase."
                 isLoading={ isLoading }
               >
-                L1 fee scalar
+                L2 fee scalar
               </DetailedInfo.ItemLabel>
               <DetailedInfo.ItemValue>
                 <Text>{ data.l1_fee_scalar }</Text>

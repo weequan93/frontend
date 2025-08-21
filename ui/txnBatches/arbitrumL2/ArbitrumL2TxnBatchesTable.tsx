@@ -19,10 +19,10 @@ const ArbitrumL2TxnBatchesTable = ({ items, top, isLoading }: Props) => {
       <TableHeaderSticky top={ top }>
         <TableRow>
           <TableColumnHeader>Batch #</TableColumnHeader>
-          <TableColumnHeader>L1 status</TableColumnHeader>
-          <TableColumnHeader>L1 block</TableColumnHeader>
+          <TableColumnHeader>L2 status</TableColumnHeader>
+          <TableColumnHeader>L2 block</TableColumnHeader>
           <TableColumnHeader>Block count</TableColumnHeader>
-          <TableColumnHeader>L1 transaction</TableColumnHeader>
+          <TableColumnHeader>L2 transaction</TableColumnHeader>
           <TableColumnHeader>
             Timestamp
             <TimeFormatToggle/>

@@ -175,10 +175,10 @@ const BlockDetails = ({ query }: Props) => {
       { rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' && data.arbitrum && (
         <>
           <DetailedInfo.ItemLabel
-            hint="The most recent L1 block height as of this L2 block"
+            hint="The most recent L2 block height as of this L3 block"
             isLoading={ isPlaceholderData }
           >
-            L1 block height
+            L2 block height
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <BlockEntityL1 isLoading={ isPlaceholderData } number={ data.arbitrum.l1_block_number }/>
@@ -345,7 +345,7 @@ const BlockDetails = ({ query }: Props) => {
           { data.arbitrum?.commitment_transaction.hash && (
             <>
               <DetailedInfo.ItemLabel
-                hint="L1 transaction containing this batch commitment"
+                hint="L2 transaction containing this batch commitment"
                 isLoading={ isPlaceholderData }
               >
                 Commitment tx
@@ -359,7 +359,7 @@ const BlockDetails = ({ query }: Props) => {
           { data.arbitrum?.confirmation_transaction.hash && (
             <>
               <DetailedInfo.ItemLabel
-                hint="L1 transaction containing confirmation of this batch"
+                hint="L2 transaction containing confirmation of this batch"
                 isLoading={ isPlaceholderData }
               >
                 Confirmation tx
@@ -695,7 +695,7 @@ const BlockDetails = ({ query }: Props) => {
         { rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' && data.arbitrum && data.arbitrum.send_count && (
           <>
             <DetailedInfo.ItemLabel
-              hint="The cumulative number of L2 to L1 transactions as of this block"
+              hint="The cumulative number of L3 to L2 transactions as of this block"
               isLoading={ isPlaceholderData }
             >
               Send count
@@ -705,7 +705,7 @@ const BlockDetails = ({ query }: Props) => {
             </DetailedInfo.ItemValue>
 
             <DetailedInfo.ItemLabel
-              hint="The root of the Merkle accumulator representing all L2 to L1 transactions as of this block"
+              hint="The root of the Merkle accumulator representing all L3 to L2 transactions as of this block"
               isLoading={ isPlaceholderData }
             >
               Send root
@@ -715,7 +715,7 @@ const BlockDetails = ({ query }: Props) => {
             </DetailedInfo.ItemValue>
 
             <DetailedInfo.ItemLabel
-              hint="The number of delayed L1 to L2 messages read as of this block"
+              hint="The number of delayed L2 to L3 messages read as of this block"
               isLoading={ isPlaceholderData }
             >
               Delayed messages

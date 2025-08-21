@@ -85,8 +85,8 @@ const ArbitrumL2Messages = ({ direction }: Props) => {
     <>
       <PageTitle
         title={ direction === 'from-rollup' ?
-          `Withdrawals (L2${ nbsp }${ rightLineArrow }${ nbsp }L1)` :
-          `Deposits (L1${ nbsp }${ rightLineArrow }${ nbsp }L2)` }
+          `Withdrawals (L3${nbsp}${rightLineArrow}${nbsp }L2)` :
+          `Deposits (L2${nbsp}${rightLineArrow}${nbsp }L3)` }
         withTextAd
       />
       <DataListDisplay

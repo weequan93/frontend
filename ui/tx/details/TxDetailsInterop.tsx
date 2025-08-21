@@ -86,7 +86,7 @@ const TxDetailsInterop = ({ data, isLoading }: Props) => {
     return (
       <>
         <DetailedInfo.ItemLabel
-          hint="The originating transaction that initiated the cross-L2 message on the source chain"
+          hint="The originating transaction that initiated the cross-L3 message on the source chain"
           isLoading={ isLoading }
         >
           Interop source tx
@@ -105,7 +105,7 @@ const TxDetailsInterop = ({ data, isLoading }: Props) => {
     return (
       <>
         <DetailedInfo.ItemLabel
-          hint="The transaction that relays the cross-L2 message to its destination chain"
+          hint="The transaction that relays the cross-L3 message to its destination chain"
           isLoading={ isLoading }
         >
           Interop relay tx

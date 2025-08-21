@@ -8,7 +8,7 @@ export const sealed: ZkSyncBatchesItem = {
   number: 8055,
   prove_transaction_hash: null,
   prove_transaction_timestamp: null,
-  status: 'Sealed on L2',
+  status: 'Sealed on L3',
   timestamp: '2022-03-19T12:53:36.000000Z',
   transactions_count: 738,
 };

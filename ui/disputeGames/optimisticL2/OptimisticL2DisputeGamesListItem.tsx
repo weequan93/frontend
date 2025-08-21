@@ -40,7 +40,7 @@ const OptimisticL2DisputeGamesListItem = ({ item, isLoading }: Props) => {
         </Skeleton>
       </ListItemMobileGrid.Value>
 
-      <ListItemMobileGrid.Label isLoading={ isLoading }>L2 block #</ListItemMobileGrid.Label>
+      <ListItemMobileGrid.Label isLoading={isLoading}>L3 block #</ListItemMobileGrid.Label>
       <ListItemMobileGrid.Value>
         <BlockEntityL2
           isLoading={ isLoading }

@@ -71,7 +71,7 @@ const OptimisticL2Deposits = () => {
 
   return (
     <>
-      <PageTitle title={ `Deposits (L1${ nbsp }${ rightLineArrow }${ nbsp }L2)` } withTextAd/>
+      <PageTitle title={`Deposits (L2${nbsp}${rightLineArrow}${nbsp }L3)` } withTextAd/>
       <DataListDisplay
         isError={ isError }
         itemsNum={ data?.items?.length }
