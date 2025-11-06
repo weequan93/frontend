@@ -31,6 +31,7 @@ import FilecoinActorTag from './filecoin/FilecoinActorTag';
 import TokenSelect from './tokenSelect/TokenSelect';
 import type { AddressCountersQuery } from './utils/useAddressCountersQuery';
 import type { AddressQuery } from './utils/useAddressQuery';
+import useDeriwAddressAccountQuery from './utils/useDeriwAddressAccountQuery';
 
 interface Props {
   addressQuery: AddressQuery;
@@ -42,6 +43,9 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
   const router = useRouter();
 
   const addressHash = getQueryParamString(router.query.hash);
+
+
+  const deriwAddressQuery = useDeriwAddressAccountQuery({ address: addressHash, isEnabled: true });
 
   const addressType = addressQuery.data?.is_contract && addressQuery.data?.proxy_type !== 'eip7702' ? 'contract' : 'eoa';
   const address3rdPartyWidgets = useAddress3rdPartyWidgets(addressType, addressQuery.isPlaceholderData);
@@ -305,6 +309,22 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
             </DetailedInfo.ItemValue>
           </>
         ) }
+
+        {
+          deriwAddressQuery.balance && (
+            <>
+              <DetailedInfo.ItemLabel
+                hint={ `Deriw position value + Account USD balance` }
+                isLoading={ deriwAddressQuery.isPlaceholderData }
+              >
+                Account Value
+              </DetailedInfo.ItemLabel>
+              <DetailedInfo.ItemValue>
+                ${deriwAddressQuery.isPlaceholderData ? '0' : Number(deriwAddressQuery.balance).toLocaleString()}
+              </DetailedInfo.ItemValue>
+            </>
+          ) 
+        }
 
         <DetailedInfoSponsoredItem isLoading={ isLoading }/>
 

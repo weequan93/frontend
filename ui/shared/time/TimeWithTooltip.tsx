@@ -34,10 +34,10 @@ const TimeWithTooltip = ({ timestamp, fallbackText, isLoading, enableIncrement, 
     }
 
     if (timeFormat === 'relative') {
-      return <Tooltip content={ dayjs(timestamp).format('llll') }><span>{ timeAgo }</span></Tooltip>;
+      return <Tooltip content={dayjs(timestamp).format('MMM D, YYYY HH:mm:ss') }><span>{ timeAgo }</span></Tooltip>;
     }
 
-    return <Tooltip content={ timeAgo }><span>{ dayjs(timestamp).format('lll') }</span></Tooltip>;
+    return <Tooltip content={timeAgo}><span>{dayjs(timestamp).format('MMM D, YYYY HH:mm:ss') }</span></Tooltip>;
   })();
 
   return (

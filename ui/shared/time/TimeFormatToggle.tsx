@@ -11,7 +11,7 @@ interface Props extends IconButtonProps {}
 
 const TimeFormatToggle = (props: Props) => {
   const settings = useSettingsContext();
-  const timeFormat = settings?.timeFormat || 'relative';
+  const timeFormat = settings?.timeFormat || 'absolute';
 
   const handleClick = React.useCallback(() => {
     settings?.toggleTimeFormat();

@@ -30,7 +30,7 @@ const TxsWithAPISorting = ({
   showBlockInfo = true,
   socketType,
   currentAddress,
-  enableTimeIncrement,
+  enableTimeIncrement = true,
   top,
   sorting,
   setSort,

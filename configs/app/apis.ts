@@ -167,6 +167,18 @@ const visualizeApi = (() => {
   });
 })();
 
+const deriwApi = (() => {
+  const apiHost = getEnvValue('NEXT_PUBLIC_DERIW_API_HOST');
+  if (!apiHost) {
+    return;
+  }
+
+  return Object.freeze({
+    endpoint: apiHost,
+    basePath: stripTrailingSlash(getEnvValue('NEXT_PUBLIC_DERIW_API_BASE_PATH') || ''),
+  });
+})();
+
 export type Apis = {
   general: ApiPropsFull;
 } & Partial<Record<Exclude<ApiName, 'general'>, ApiPropsBase>>;
@@ -176,6 +188,7 @@ const apis: Apis = Object.freeze({
   admin: adminApi,
   bens: bensApi,
   contractInfo: contractInfoApi,
+  deriw: deriwApi,
   metadata: metadataApi,
   multichain: multichainApi,
   rewards: rewardsApi,

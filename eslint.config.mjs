@@ -408,7 +408,7 @@ export default tseslint.config(
       // rules customizations
       eqeqeq: [ 'error', 'allow-null' ],
       'id-match': [ 'error', '^[\\w$]+$' ],
-      'max-len': [ 'error', 160, 4 ],
+      'max-len': [ 'error', 180, 4 ],
       'no-console': 'error',
       'no-implicit-coercion': [ 'error', {
         number: true,

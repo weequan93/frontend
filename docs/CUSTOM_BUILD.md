@@ -8,3 +8,6 @@ docker run -p 3000:3000 --env-file <path-to-your-env-file> <your-image-tag>
 ```
 
 *Disclaimer* Do not try to generate production build of the app on your local machine (outside the docker). The app will not work as you would expect.
+
+docker buildx build  . --tag quanquanah/blockscout-frontend:dev
+docker run -p 3000:3000 --env-file .env quanquanah/blockscout-frontend:dev

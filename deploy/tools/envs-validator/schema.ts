@@ -644,6 +644,14 @@ const addressMetadataSchema = yup
       }),
   });
 
+const deriwSchema = yup
+  .object()
+  .shape({
+    NEXT_PUBLIC_DERIW_API_HOST: yup.string().test(urlTest),
+    NEXT_PUBLIC_DERIW_API_BASE_PATH: yup.string(),
+    NEXT_PUBLIC_DERIW_USDT_ADDRESS: yup.string().matches(regexp.HEX_REGEXP),
+  });
+
 const deFiDropdownItemSchema: yup.ObjectSchema<DeFiDropdownItem> = yup
   .object({
     text: yup.string().required(),
@@ -1152,6 +1160,7 @@ const schema = yup
   .concat(address3rdPartyWidgetsConfigSchema)
   .concat(addressMetadataSchema)
   .concat(userOpsSchema)
-  .concat(flashblocksSchema);
+  .concat(flashblocksSchema)
+  .concat(deriwSchema);
 
 export default schema;

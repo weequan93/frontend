@@ -343,6 +343,14 @@ Settings for meta tags, OG tags and SEO
 
 &nbsp;
 
+### Deriw API
+
+| Variable | Type| Description | Compulsoriness  | Default value | Example value | Version |
+| --- | --- | --- | --- | --- | --- | --- |
+| NEXT_PUBLIC_DERIW_API_HOST | `string` | Deriw API endpoint url | Required | - | `https://deriw-api.example.com` | v1.0.x+ |
+| NEXT_PUBLIC_DERIW_API_BASE_PATH | `string` | Base path for Deriw API endpoint url | - | - | `` | v1.0.x+ |
+| NEXT_PUBLIC_DERIW_USDT_ADDRESS | `string` | Address of usdt token | - | - | `` | v1.0.x+ |
+
 ### Misc
 
 | Variable | Type| Description | Compulsoriness  | Default value | Example value | Version |
