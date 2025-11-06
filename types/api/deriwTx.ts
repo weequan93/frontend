@@ -3,6 +3,7 @@ export interface DeriwTxStates {
   data: {
     list: DeriwTxState[];
   }
+  isPlaceholderData: boolean;
 }
 
 export interface DeriwTxState {

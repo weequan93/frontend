@@ -13,6 +13,14 @@ export const DERIW_ACCOUNT_INFO: AccountAddress = {
 
 export const DERIW_TX_INFO: DeriwTxStates = {
     data: {
-        list: [],
+        list: [
+            {
+                coin_name: "",
+                is_long: false,
+                order_type: "",
+                size: "",
+            }
+        ],
     },
+    isPlaceholderData: true
 }

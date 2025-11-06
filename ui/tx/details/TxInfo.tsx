@@ -416,7 +416,7 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
           </DetailedInfo.ItemValue>
         </>
       )}
-
+      
       {
         deriwTxList.length > 0 && (showAllDeriwTx ? deriwTxList : deriwTxList.slice(0, 1)).map((tx, index) => {
           return (
@@ -424,12 +424,12 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
               <>
                 <DetailedInfo.ItemLabel
                   hint="Order"
-                  isLoading={isLoading}
+                  isLoading={deriwTxQuery.isPlaceholderData}
                 >
                   Action {deriwTxList.length > 1 && `#${index + 1}`}
                 </DetailedInfo.ItemLabel>
                 <DetailedInfo.ItemValue>
-                  <Skeleton loading={isLoading}>
+                  <Skeleton loading={isLoading || deriwTxQuery.isPlaceholderData}>
                     <span>{tx.is_long == true ? "Long" : "Short"} {tx.coin_name}</span>
                   </Skeleton>
                 </DetailedInfo.ItemValue>
@@ -437,12 +437,12 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
               <>
                 <DetailedInfo.ItemLabel
                   hint="Execution type"
-                  isLoading={isLoading}
+                  isLoading={deriwTxQuery.isPlaceholderData}
                 >
                   Price {deriwTxList.length > 1 && `#${index + 1}`}
                 </DetailedInfo.ItemLabel>
                 <DetailedInfo.ItemValue>
-                  <Skeleton loading={isLoading}>
+                  <Skeleton loading={deriwTxQuery.isPlaceholderData}>
                     <span>{capitalizeFirstLetter(tx.order_type || '-')}</span>
                   </Skeleton>
                 </DetailedInfo.ItemValue>
@@ -450,12 +450,12 @@ const TxInfo = ({ data, tacOperations, isLoading, socketStatus }: Props) => {
               <>
                 <DetailedInfo.ItemLabel
                   hint="Number of quantity"
-                  isLoading={isLoading}
+                  isLoading={deriwTxQuery.isPlaceholderData}
                 >
                   Size {deriwTxList.length > 1 && `#${index + 1}`} 
                 </DetailedInfo.ItemLabel>
                 <DetailedInfo.ItemValue>
-                  <Skeleton loading={isLoading}>
+                  <Skeleton loading={deriwTxQuery.isPlaceholderData}>
                     <span>{tx.size || '-'} {(tx.size == '-' || tx.size == '') ? '' : tx.coin_name}</span>
                   </Skeleton>
                 </DetailedInfo.ItemValue>

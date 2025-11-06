@@ -32,6 +32,7 @@ import TokenSelect from './tokenSelect/TokenSelect';
 import type { AddressCountersQuery } from './utils/useAddressCountersQuery';
 import type { AddressQuery } from './utils/useAddressQuery';
 import useDeriwAddressAccountQuery from './utils/useDeriwAddressAccountQuery';
+import { Skeleton } from 'toolkit/chakra/skeleton';
 
 interface Props {
   addressQuery: AddressQuery;
@@ -320,7 +321,7 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
                 Account Value
               </DetailedInfo.ItemLabel>
               <DetailedInfo.ItemValue>
-                <Skeleton loading={ deriwAddressQuery.isPlaceholderData } fontWeight={{ base: 700, lg: 500 }} py={{ base: '5px', lg: '4px' }} flexGrow={ 1 }>
+                <Skeleton loading={ deriwAddressQuery.isPlaceholderData }>
                   ${deriwAddressQuery.isPlaceholderData ? '0' : Number(deriwAddressQuery.balance).toLocaleString()}
                 </Skeleton>
               </DetailedInfo.ItemValue>
