@@ -320,7 +320,9 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
                 Account Value
               </DetailedInfo.ItemLabel>
               <DetailedInfo.ItemValue>
-                ${deriwAddressQuery.isPlaceholderData ? '0' : Number(deriwAddressQuery.balance).toLocaleString()}
+                <Skeleton loading={ deriwAddressQuery.isPlaceholderData } fontWeight={{ base: 700, lg: 500 }} py={{ base: '5px', lg: '4px' }} flexGrow={ 1 }>
+                  ${deriwAddressQuery.isPlaceholderData ? '0' : Number(deriwAddressQuery.balance).toLocaleString()}
+                </Skeleton>
               </DetailedInfo.ItemValue>
             </>
           ) 
