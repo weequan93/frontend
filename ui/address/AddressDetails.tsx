@@ -316,12 +316,12 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
             <>
               <DetailedInfo.ItemLabel
                 hint={ `Deriw position value + Account USD balance` }
-                isLoading={ deriwAddressQuery.isPlaceholderData }
+                isLoading={ isLoading || countersQuery.isPlaceholderData || deriwAddressQuery.isPlaceholderData }
               >
                 Account Value
               </DetailedInfo.ItemLabel>
               <DetailedInfo.ItemValue>
-                <Skeleton loading={ deriwAddressQuery.isPlaceholderData }>
+                <Skeleton loading={ isLoading || countersQuery.isPlaceholderData || deriwAddressQuery.isPlaceholderData }>
                   ${deriwAddressQuery.isPlaceholderData ? '0' : Number(deriwAddressQuery.balance).toLocaleString()}
                 </Skeleton>
               </DetailedInfo.ItemValue>
