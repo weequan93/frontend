@@ -9,7 +9,7 @@ import type { ResourceName } from './resources';
 export const retry = (failureCount: number, error: unknown) => {
   const errorPayload = getErrorObjPayload<{ status: number }>(error);
   const status = errorPayload?.status || getErrorObjStatusCode(error);
-  if (status && status >= 400 && status < 500) {
+  if (status && status >= 400 && status <= 500) {
     // don't do retry for client error responses
     return false;
   }

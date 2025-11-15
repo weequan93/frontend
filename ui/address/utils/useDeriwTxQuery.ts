@@ -16,6 +16,7 @@ interface Params {
 }
 
 const NO_RPC_FALLBACK_ERROR_CODES = [403];
+const NO_RETRY_ERROR_CODES = [500, 503]; // Don't retry on server errors
 
 export default function useDeriwTxQuery({ hash, method, isEnabled = true }: Params): DeriwTxStates {
   const [isRefetchEnabled, setRefetchEnabled] = React.useState(false);
@@ -37,6 +38,12 @@ export default function useDeriwTxQuery({ hash, method, isEnabled = true }: Para
       placeholderData: DERIW_TX_INFO,
       refetchOnMount: false,
       retry: (failureCount, error) => {
+        
+        // Don't retry if it's a server error (500, 503, etc.)
+        if (error?.status && NO_RETRY_ERROR_CODES.includes(error.status)) {
+          return false;
+        }
+        
         if (isRefetchEnabled) {
           return false;
         }
@@ -55,9 +62,18 @@ export default function useDeriwTxQuery({ hash, method, isEnabled = true }: Para
       return;
     }
 
+    
+    // Don't enable refetch if it's a server error
+    if (apiQuery.isError && apiQuery.error?.status && NO_RETRY_ERROR_CODES.includes(apiQuery.error.status)) {
+      setRefetchEnabled(false);
+      return;
+    }
+    
     if (apiQuery.isError && apiQuery.errorUpdateCount === 1) {
       setRefetchEnabled(true);
     } else if (!apiQuery.isError) {
+      setRefetchEnabled(false);
+    } else {
       setRefetchEnabled(false);
     }
   }, [apiQuery.errorUpdateCount, apiQuery.isError, apiQuery.isPlaceholderData, apiQuery.error?.status]);
