@@ -26,6 +26,7 @@ const TimeWithTooltip = ({ timestamp, fallbackText, isLoading, enableIncrement, 
   const settings = useSettingsContext();
   const timeFormat = timeFormatProp || settings?.timeFormat || 'relative';
   const timeAgo = useTimeAgoIncrement(timestamp || '', enableIncrement && !isLoading && timeFormat === 'relative');
+  const absoluteDate = timestamp ? settings?.isLocalTime ? dayjs(timestamp) : dayjs(timestamp).utc() : undefined;
 
   if (!timestamp && !fallbackText) {
     return null;
@@ -37,11 +38,11 @@ const TimeWithTooltip = ({ timestamp, fallbackText, isLoading, enableIncrement, 
     }
 
     if (timeFormat === 'relative') {
-      const content = settings?.isLocalTime ? dayjs(timestamp).format('llll') : dayjs(timestamp).utc().format('llll');
+      const content = absoluteDate?.format('MMM D, YYYY HH:mm:ss');
       return <Tooltip content={ content }><span>{ timeAgo }</span></Tooltip>;
     }
 
-    return <Tooltip content={ timeAgo }><span>{ dayjs(timestamp).utc(settings?.isLocalTime).format('lll') }</span></Tooltip>;
+    return <Tooltip content={ timeAgo }><span>{ absoluteDate?.format('MMM D, YYYY HH:mm:ss') }</span></Tooltip>;
   })();
 
   return (

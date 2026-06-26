@@ -27,5 +27,5 @@ export type AdvancedFilterParams = {
 
 export type AdvancedFilterType = 'coin_transfer' | 'contract_creation' | 'contract_interaction' | TokenType;
 
-export const ADVANCED_FILTER_AGES = [ '1h', '24h', '7d', '1m', '3m', '6m' ] as const;
+export const ADVANCED_FILTER_AGES = [ '5m', '1h', '12h', '24h', '7d', '15d', '1M' ] as const;
 export type AdvancedFilterAge = typeof ADVANCED_FILTER_AGES[number];

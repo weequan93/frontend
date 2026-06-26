@@ -27,7 +27,8 @@ const parentChain: ParentChain | undefined = (() => {
   };
 })();
 
-const title = 'Rollup (L2) chain';
+const layerNumber = Number(getEnvValue('NEXT_PUBLIC_ROLLUP_LAYER_NUMBER') || 2);
+const title = `Rollup (L${ layerNumber }) chain`;
 
 const config: Feature<{
   type: RollupType;
@@ -52,7 +53,7 @@ const config: Feature<{
       isEnabled: true,
       type,
       stageIndex: getEnvValue('NEXT_PUBLIC_ROLLUP_STAGE_INDEX'),
-      layerNumber: Number(getEnvValue('NEXT_PUBLIC_ROLLUP_LAYER_NUMBER') || 2),
+      layerNumber,
       L2WithdrawalUrl: type === 'optimistic' ? L2WithdrawalUrl : undefined,
       outputRootsEnabled: type === 'optimistic' && getEnvValue('NEXT_PUBLIC_ROLLUP_OUTPUT_ROOTS_ENABLED') === 'true',
       interopEnabled: type === 'optimistic' && getEnvValue('NEXT_PUBLIC_INTEROP_ENABLED') === 'true',

@@ -29,6 +29,7 @@ import TxAllowedPeekers from 'src/features/chain-variants/suave/pages/tx/TxAllow
 import TxDetailsTacOperation from 'src/features/chain-variants/tac/pages/tx/TxDetailsTacOperation';
 import TxDetailsCrossChainMessages from 'src/features/cross-chain-txs/pages/tx/TxDetailsCrossChainMessages';
 import TxDetailsCrossChainTransfers from 'src/features/cross-chain-txs/pages/tx/TxDetailsCrossChainTransfers';
+import useDeriwTxQuery from 'src/features/deriw/hooks/useDeriwTxQuery';
 import AddressEntityInterop from 'src/features/op-interop/components/AddressEntityInterop';
 import TxDetailsInterop from 'src/features/op-interop/pages/tx/TxDetailsInterop';
 import TxDetailsWithdrawalStatusArbitrum from 'src/features/rollup/arbitrum/pages/tx/TxDetailsWithdrawalStatusArbitrum';
@@ -82,9 +83,23 @@ interface Props {
 
 const rollupFeature = config.features.rollup;
 
+const formatDeriwOrderType = (orderType: string) => {
+  if (!orderType) {
+    return '-';
+  }
+
+  return `${ orderType.charAt(0).toUpperCase() }${ orderType.slice(1) }`;
+};
+
 // REFACTOR: Put feature related parts under the feature folder
 const TxDetails = ({ data, isLoading, socketStatus, noTxActions }: Props) => {
   const [ isExpanded, setIsExpanded ] = React.useState(false);
+  const [ showAllDeriwTx, setShowAllDeriwTx ] = React.useState(false);
+  const deriwTxQuery = useDeriwTxQuery({
+    hash: data?.hash ?? '',
+    method: data?.method ?? '',
+    isEnabled: Boolean(data),
+  });
 
   const handleCutLinkClick = React.useCallback(() => {
     setIsExpanded((flag) => !flag);
@@ -128,6 +143,8 @@ const TxDetails = ({ data, isLoading, socketStatus, noTxActions }: Props) => {
   ) : null;
 
   const hasInterop = rollupFeature.isEnabled && rollupFeature.interopEnabled && data.op_interop_messages && data.op_interop_messages.length > 0;
+  const deriwTxList = deriwTxQuery.data.list;
+  const visibleDeriwTxList = showAllDeriwTx ? deriwTxList : deriwTxList.slice(0, 1);
 
   return (
     <DetailedInfo.Container templateColumns={{ base: 'minmax(0, 1fr)', lg: 'minmax(215px, auto) minmax(0, 1fr)' }}>
@@ -341,6 +358,62 @@ const TxDetails = ({ data, isLoading, socketStatus, noTxActions }: Props) => {
                 </Skeleton>
               </Flex>
             ) }
+          </DetailedInfo.ItemValue>
+        </>
+      ) }
+
+      { visibleDeriwTxList.map((tx, index) => (
+        <React.Fragment key={ `${ tx.coin_name }-${ index }` }>
+          <DetailedInfo.ItemLabel
+            hint="Deriw order direction"
+            isLoading={ deriwTxQuery.isPlaceholderData }
+          >
+            Action{ deriwTxList.length > 1 ? ` #${ index + 1 }` : '' }
+          </DetailedInfo.ItemLabel>
+          <DetailedInfo.ItemValue>
+            <Skeleton loading={ deriwTxQuery.isPlaceholderData }>
+              <span>{ tx.is_long ? 'Long' : 'Short' } { tx.coin_name || '-' }</span>
+            </Skeleton>
+          </DetailedInfo.ItemValue>
+
+          <DetailedInfo.ItemLabel
+            hint="Deriw position size"
+            isLoading={ deriwTxQuery.isPlaceholderData }
+          >
+            Size
+          </DetailedInfo.ItemLabel>
+          <DetailedInfo.ItemValue>
+            <Skeleton loading={ deriwTxQuery.isPlaceholderData }>
+              <span>{ tx.size || '-' }</span>
+            </Skeleton>
+          </DetailedInfo.ItemValue>
+
+          <DetailedInfo.ItemLabel
+            hint="Deriw order type"
+            isLoading={ deriwTxQuery.isPlaceholderData }
+          >
+            Order type
+          </DetailedInfo.ItemLabel>
+          <DetailedInfo.ItemValue>
+            <Skeleton loading={ deriwTxQuery.isPlaceholderData }>
+              <span>{ formatDeriwOrderType(tx.order_type) }</span>
+            </Skeleton>
+          </DetailedInfo.ItemValue>
+        </React.Fragment>
+      )) }
+
+      { deriwTxList.length > 1 && (
+        <>
+          <DetailedInfo.ItemLabel
+            hint="Toggle all Deriw trade rows"
+            isLoading={ deriwTxQuery.isPlaceholderData }
+          >
+            Deriw trades
+          </DetailedInfo.ItemLabel>
+          <DetailedInfo.ItemValue>
+            <Link onClick={ () => setShowAllDeriwTx((value) => !value) }>
+              { showAllDeriwTx ? 'Show less' : `Show all (${ deriwTxList.length })` }
+            </Link>
           </DetailedInfo.ItemValue>
         </>
       ) }

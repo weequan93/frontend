@@ -31,6 +31,7 @@ All json-like values should be single-quoted. If it contains a hash (`#`) or a d
   - [BENS (Name Service) API](#bens-name-service-api)
   - [Clusters API](#clusters-api)
   - [Contract Info API](#contract-info-api)
+  - [Deriw API](#deriw-api)
   - [Interchain Indexer API](#interchain-indexer-api)
   - [Metadata Service API](#metadata-service-api)
   - [Multichain Aggregator API](#multichain-aggregator-api)
@@ -179,6 +180,18 @@ Verified-contract metadata service powering features like DEX pools.
 | --- | --- | --- | --- | --- | --- | --- |
 | NEXT_PUBLIC_CONTRACT_INFO_API_HOST | `string` | Contract Info API endpoint url | Required | - | `https://contracts-info.services.blockscout.com` | v1.1.0+ |
 | NEXT_PUBLIC_CONTRACT_INFO_INSTANCE_ID | `string` | Instance ID to use in the service resource paths | - | same as `NEXT_PUBLIC_NETWORK_ID` | `420:duck` | v2.8.0+ |
+
+&nbsp;
+
+### Deriw API
+
+Deriw account and transaction metadata service.
+
+| Variable | Type | Description | Compulsoriness | Default value | Example value | Version |
+| --- | --- | --- | --- | --- | --- | --- |
+| NEXT_PUBLIC_DERIW_API_HOST | `string` | Deriw API endpoint url | Required | - | `https://deriw-api.example.com` | v2.9.0+ |
+| NEXT_PUBLIC_DERIW_API_BASE_PATH | `string` | Base path for Deriw API endpoint url | - | - | `/api` | v2.9.0+ |
+| NEXT_PUBLIC_DERIW_USDT_ADDRESS | `string` | USDT token contract address used to include wallet balance in Deriw account value | - | - | `0x0000000000000000000000000000000000000000` | v2.9.0+ |
 
 &nbsp;
 

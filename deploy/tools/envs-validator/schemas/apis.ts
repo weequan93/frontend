@@ -2,6 +2,7 @@ import * as yup from 'yup';
 import { getYupValidationErrorMessage, protocols, urlTest } from '../utils';
 import { replaceQuotes } from 'src/config/utils/envs';
 import { StatsApiResourceNameRefetchInterval } from 'src/features/chain-stats/types/config';
+import * as regexp from 'src/toolkit/utils/regexp';
 
 const statsApiRefetchIntervalSchema = yup.object<Record<StatsApiResourceNameRefetchInterval, number>>()
   .transform(replaceQuotes)
@@ -50,6 +51,10 @@ export default yup.object({
 
     NEXT_PUBLIC_VISUALIZE_API_HOST: yup.string().test(urlTest),
     NEXT_PUBLIC_VISUALIZE_API_BASE_PATH: yup.string(),
+
+    NEXT_PUBLIC_DERIW_API_HOST: yup.string().test(urlTest),
+    NEXT_PUBLIC_DERIW_API_BASE_PATH: yup.string(),
+    NEXT_PUBLIC_DERIW_USDT_ADDRESS: yup.string().matches(regexp.HEX_REGEXP_WITH_0X),
 
     NEXT_PUBLIC_CONTRACT_INFO_API_HOST: yup.string().test(urlTest),
     NEXT_PUBLIC_CONTRACT_INFO_INSTANCE_ID: yup.string()

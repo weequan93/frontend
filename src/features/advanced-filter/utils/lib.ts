@@ -40,18 +40,20 @@ export const getAdvancedFilterTypes = (chainConfig?: Array<ClusterChainConfig['a
 
 export function getDurationFromAge(age: AdvancedFilterAge) {
   switch (age) {
+    case '5m':
+      return HOUR / 12;
     case '1h':
       return HOUR;
+    case '12h':
+      return HOUR * 12;
     case '24h':
       return DAY;
     case '7d':
       return DAY * 7;
-    case '1m':
+    case '15d':
+      return DAY * 15;
+    case '1M':
       return MONTH;
-    case '3m':
-      return MONTH * 3;
-    case '6m':
-      return MONTH * 6;
   }
 }
 

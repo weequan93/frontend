@@ -17,6 +17,7 @@ import Address3rdPartyWidgets from 'src/features/address-3rd-party-widgets/pages
 import useAddress3rdPartyWidgets from 'src/features/address-3rd-party-widgets/pages/address/useAddress3rdPartyWidgets';
 import AddressCeloAccount from 'src/features/chain-variants/celo/pages/address/AddressCeloAccount';
 import FilecoinActorTag from 'src/features/chain-variants/filecoin/pages/address/FilecoinActorTag';
+import useDeriwAddressAccountQuery from 'src/features/deriw/hooks/useDeriwAddressAccountQuery';
 
 import config from 'src/config';
 import ApiFetchAlert from 'src/shared/alerts/ApiFetchAlert';
@@ -27,6 +28,8 @@ import isCustomAppError from 'src/shared/errors/is-custom-app-error';
 import throwOnResourceLoadError from 'src/shared/errors/throw-on-resource-load-error';
 import getQueryParamString from 'src/shared/router/get-query-param-string';
 import CopyToClipboard from 'src/shared/texts/CopyToClipboard';
+
+import { Skeleton } from 'src/toolkit/chakra/skeleton';
 
 import AddressAlternativeFormat from './AddressAlternativeFormat';
 import AddressBalance from './AddressBalance';
@@ -49,6 +52,8 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
 
   const addressType = addressQuery.data?.is_contract && addressQuery.data?.proxy_type !== 'eip7702' ? 'contract' : 'eoa';
   const address3rdPartyWidgets = useAddress3rdPartyWidgets(addressType, addressQuery.isPlaceholderData);
+  const deriwAddressQuery = useDeriwAddressAccountQuery({ address: addressHash, isEnabled: Boolean(addressHash) });
+  const hasDeriwAccountValue = deriwAddressQuery.isPlaceholderData || Number(deriwAddressQuery.balance) > 0;
 
   const error404Data = React.useMemo(() => ({
     hash: addressHash || '',
@@ -180,6 +185,22 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
         ) }
 
         <AddressBalance data={ data } isLoading={ isLoading }/>
+
+        { hasDeriwAccountValue && (
+          <>
+            <DetailedInfo.ItemLabel
+              hint="Deriw position value plus account USDT balance"
+              isLoading={ deriwAddressQuery.isPlaceholderData }
+            >
+              Account value
+            </DetailedInfo.ItemLabel>
+            <DetailedInfo.ItemValue>
+              <Skeleton loading={ deriwAddressQuery.isPlaceholderData }>
+                <span>${ Number(deriwAddressQuery.balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }</span>
+              </Skeleton>
+            </DetailedInfo.ItemValue>
+          </>
+        ) }
 
         { data.has_tokens && (
           <>

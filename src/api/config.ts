@@ -95,6 +95,18 @@ const contractInfoApi = (() => {
   });
 })();
 
+const deriwApi = (() => {
+  const apiHost = getEnvValue('NEXT_PUBLIC_DERIW_API_HOST');
+  if (!apiHost) {
+    return;
+  }
+
+  return Object.freeze({
+    endpoint: apiHost,
+    basePath: stripTrailingSlash(getEnvValue('NEXT_PUBLIC_DERIW_API_BASE_PATH') || ''),
+  });
+})();
+
 const interchainIndexerApi = (() => {
   const apiHost = getEnvValue('NEXT_PUBLIC_INTERCHAIN_INDEXER_API_HOST');
   if (!apiHost) {
@@ -253,6 +265,7 @@ const apis: Apis = Object.freeze({
   bens: bensApi,
   clusters: clustersApi,
   contractInfo: contractInfoApi,
+  deriw: deriwApi,
   interchainIndexer: interchainIndexerApi,
   metadata: metadataApi,
   multichainAggregator: multichainAggregatorApi,

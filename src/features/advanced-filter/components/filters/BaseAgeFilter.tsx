@@ -18,6 +18,7 @@ import { ndash } from 'src/toolkit/utils/htmlEntities';
 import { getDurationFromAge } from '../../utils/lib';
 
 const defaultValue = { age: '', from: '', to: '' } as const;
+const MAX_DAYS = 31;
 type AgeFromToValue = { age: AdvancedFilterAge | ''; from: string; to: string };
 
 type DateConverter = {
@@ -40,14 +41,73 @@ type Props<T> = {
   dateConverter: DateConverter;
 };
 
-const DateInput = ({ value, onChange, placeholder, max }: { value: string; onChange: (value: string) => void; placeholder: string; max: string }) => {
+const normalizeDateInputValue = (value: string) => value ? dayjs(value).format('YYYY-MM-DD') : '';
+
+const getEarlierDate = (first: string, second: string) => dayjs(first).isBefore(dayjs(second)) ? first : second;
+
+const clampRangeFromStart = (from: string, to: string) => {
+  if (!from || !to) {
+    return { from, to };
+  }
+
+  const fromDate = dayjs(from).startOf('day');
+  let toDate = dayjs(to).startOf('day');
+
+  if (toDate.isBefore(fromDate)) {
+    toDate = fromDate;
+  }
+
+  const maxToDate = fromDate.add(MAX_DAYS, 'day');
+  if (toDate.diff(fromDate, 'day') > MAX_DAYS) {
+    toDate = maxToDate;
+  }
+
+  return {
+    from: fromDate.format('YYYY-MM-DD'),
+    to: toDate.format('YYYY-MM-DD'),
+  };
+};
+
+const clampRangeFromEnd = (from: string, to: string) => {
+  if (!from || !to) {
+    return { from, to };
+  }
+
+  let fromDate = dayjs(from).startOf('day');
+  const toDate = dayjs(to).startOf('day');
+
+  if (fromDate.isAfter(toDate)) {
+    fromDate = toDate;
+  }
+
+  const minFromDate = toDate.subtract(MAX_DAYS, 'day');
+  if (toDate.diff(fromDate, 'day') > MAX_DAYS) {
+    fromDate = minFromDate;
+  }
+
+  return {
+    from: fromDate.format('YYYY-MM-DD'),
+    to: toDate.format('YYYY-MM-DD'),
+  };
+};
+
+const DateInput = ({
+  value,
+  onChange,
+  placeholder,
+  min,
+  max,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  min?: string;
+  max: string;
+}) => {
   const [ tempValue, setTempValue ] = React.useState(value || '');
 
-  // reset
   React.useEffect(() => {
-    if (!value) {
-      setTempValue('');
-    }
+    setTempValue(value || '');
   }, [ value ]);
 
   const handleChange = React.useCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +121,7 @@ const DateInput = ({ value, onChange, placeholder, max }: { value: string; onCha
       onChange={ handleChange }
       placeholder={ placeholder }
       type="date"
+      min={ min }
       max={ max }
       autoComplete="off"
       size="sm"
@@ -92,11 +153,17 @@ function BaseAgeFilter<T>({
   });
 
   const handleFromChange = React.useCallback((newValue: string) => {
-    setCurrentValue(prev => ({ age: '', to: prev.to, from: newValue }));
+    setCurrentValue(prev => {
+      const range = clampRangeFromStart(normalizeDateInputValue(newValue), normalizeDateInputValue(prev.to));
+      return { age: '', ...range };
+    });
   }, []);
 
   const handleToChange = React.useCallback((newValue: string) => {
-    setCurrentValue(prev => ({ age: '', from: prev.from, to: newValue }));
+    setCurrentValue(prev => {
+      const range = clampRangeFromEnd(normalizeDateInputValue(prev.from), normalizeDateInputValue(newValue));
+      return { age: '', ...range };
+    });
   }, []);
 
   const onPresetChange = React.useCallback((age: AdvancedFilterAge) => {
@@ -129,8 +196,9 @@ function BaseAgeFilter<T>({
       handleFilterChange(fieldNames.age, currentValue.age);
     } else {
       // Custom date range is selected
-      const from = currentValue.from ? dateConverter.toFilterValue(dayjs(currentValue.from).startOf('day').toISOString()) : undefined;
-      const to = currentValue.to ? dateConverter.toFilterValue(dayjs(currentValue.to).endOf('day').toISOString()) : undefined;
+      const range = clampRangeFromStart(normalizeDateInputValue(currentValue.from), normalizeDateInputValue(currentValue.to));
+      const from = range.from ? dateConverter.toFilterValue(dayjs(range.from).startOf('day').toISOString()) : undefined;
+      const to = range.to ? dateConverter.toFilterValue(dayjs(range.to).endOf('day').toISOString()) : undefined;
       handleFilterChange(fieldNames.from, from);
       handleFilterChange(fieldNames.to, to);
       handleFilterChange(fieldNames.age, undefined);
@@ -158,6 +226,12 @@ function BaseAgeFilter<T>({
     return !isEqual(currentValue, originalValueAsDates);
   }, [ currentValue, value, dateConverter ]);
 
+  const today = dayjs().format('YYYY-MM-DD');
+  const fromValue = currentValue.age ? '' : normalizeDateInputValue(currentValue.from);
+  const toValue = currentValue.age ? '' : normalizeDateInputValue(currentValue.to);
+  const fromMax = toValue ? getEarlierDate(toValue, today) : today;
+  const toMax = fromValue ? getEarlierDate(dayjs(fromValue).add(MAX_DAYS, 'day').format('YYYY-MM-DD'), today) : today;
+
   return (
     <TableColumnFilter
       title="Set last duration"
@@ -178,17 +252,18 @@ function BaseAgeFilter<T>({
       </Flex>
       <Flex mt={ 3 }>
         <DateInput
-          value={ currentValue.age ? '' : currentValue.from }
+          value={ fromValue }
           onChange={ handleFromChange }
           placeholder="From"
-          max={ dayjs().format('YYYY-MM-DD') }
+          max={ fromMax }
         />
         <Text mx={ 3 }>{ ndash }</Text>
         <DateInput
-          value={ currentValue.age ? '' : currentValue.to }
+          value={ toValue }
           onChange={ handleToChange }
           placeholder="To"
-          max={ dayjs().format('YYYY-MM-DD') }
+          min={ fromValue || undefined }
+          max={ toMax }
         />
       </Flex>
     </TableColumnFilter>

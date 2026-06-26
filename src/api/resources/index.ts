@@ -13,6 +13,8 @@ import { CONTRACT_INFO_API_RESOURCES } from './services/contract-info';
 import type { ContractInfoApiPaginationFilters, ContractInfoApiResourceName, ContractInfoApiResourcePayload } from './services/contract-info';
 import { CORE_API_RESOURCES } from './services/core';
 import type { CoreApiResourceName, CoreApiResourcePayload, CoreApiPaginationFilters, CoreApiPaginationSorting } from './services/core';
+import { DERIW_API_RESOURCES } from './services/deriw';
+import type { DeriwApiResourceName, DeriwApiResourcePayload } from './services/deriw';
 import type {
   InterchainIndexerApiPaginationFilters,
   InterchainIndexerApiResourceName,
@@ -52,6 +54,7 @@ export const RESOURCES = {
   clusters: CLUSTERS_API_RESOURCES,
   contractInfo: CONTRACT_INFO_API_RESOURCES,
   core: CORE_API_RESOURCES,
+  deriw: DERIW_API_RESOURCES,
   interchainIndexer: INTERCHAIN_INDEXER_API_RESOURCES,
   metadata: METADATA_API_RESOURCES,
   multichainAggregator: MULTICHAIN_AGGREGATOR_API_RESOURCES,
@@ -86,6 +89,7 @@ R extends BensApiResourceName ? BensApiResourcePayload<R> :
 R extends ClustersApiResourceName ? ClustersApiResourcePayload<R> :
 R extends ContractInfoApiResourceName ? ContractInfoApiResourcePayload<R> :
 R extends CoreApiResourceName ? CoreApiResourcePayload<R> :
+R extends DeriwApiResourceName ? DeriwApiResourcePayload<R> :
 R extends InterchainIndexerApiResourceName ? InterchainIndexerApiResourcePayload<R> :
 R extends MetadataApiResourceName ? MetadataApiResourcePayload<R> :
 R extends MultichainAggregatorApiResourceName ? MultichainAggregatorApiResourcePayload<R> :

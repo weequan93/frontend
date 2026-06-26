@@ -28,6 +28,7 @@ const app = Object.freeze({
   baseUrl,
   useProxy: getEnvValue('NEXT_PUBLIC_USE_NEXT_JS_PROXY') === 'true',
   spriteHash,
+  deriwUsdtAddress: getEnvValue('NEXT_PUBLIC_DERIW_USDT_ADDRESS'),
   isPrivateMode: isPrivateMode(),
 });
 
