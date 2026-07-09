@@ -67,6 +67,7 @@ export default tseslint.config(
     'public/',
     '.git/',
     'next.config.js',
+    'next-env.d.ts',
   ] },
 
   { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
@@ -440,7 +441,7 @@ export default tseslint.config(
       'playwright/**',
       'deploy/scripts/**',
       'deploy/tools/**',
-      'middleware.ts',
+      'proxy.ts',
       'instrumentation*.ts',
       '*.config.ts',
       '*.config.js',

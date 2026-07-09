@@ -38,6 +38,7 @@ const moduleExports = {
   redirects,
   headers,
   output: 'standalone',
+  outputFileTracingRoot: __dirname,
   // Do not publish browser source maps under /_next/static in production.
   productionBrowserSourceMaps: false,
   serverExternalPackages: ["@opentelemetry/sdk-node", "@opentelemetry/auto-instrumentations-node"],
