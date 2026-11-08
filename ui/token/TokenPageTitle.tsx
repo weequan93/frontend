@@ -3,17 +3,16 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import React from 'react';
 
 import type { Address } from 'types/api/address';
-import type { TokenInfo } from 'types/api/token';
+import type { TokenInfo, TokenVerifiedInfo as TTokenVerifiedInfo } from 'types/api/token';
 import type { EntityTag } from 'ui/shared/EntityTags/types';
 
 import config from 'configs/app';
 import useAddressMetadataInfoQuery from 'lib/address/useAddressMetadataInfoQuery';
 import type { ResourceError } from 'lib/api/resources';
-import useApiQuery from 'lib/api/useApiQuery';
 import { useMultichainContext } from 'lib/contexts/multichain';
 import { getTokenTypeName } from 'lib/token/tokenTypes';
 import { Tooltip } from 'toolkit/chakra/tooltip';
-import AddressMetadataAlert from 'ui/address/details/AddressMetadataAlert';
+import AddressAlerts from 'ui/address/details/AddressAlerts';
 import AddressQrCode from 'ui/address/details/AddressQrCode';
 import AccountActionsMenu from 'ui/shared/AccountActionsMenu/AccountActionsMenu';
 import AddressAddToWallet from 'ui/shared/address/AddressAddToWallet';
@@ -33,17 +32,13 @@ const PREDEFINED_TAG_PRIORITY = 100;
 interface Props {
   tokenQuery: UseQueryResult<TokenInfo, ResourceError<unknown>>;
   addressQuery: UseQueryResult<Address, ResourceError<unknown>>;
+  verifiedInfoQuery: UseQueryResult<TTokenVerifiedInfo, ResourceError<unknown>>;
   hash: string;
 }
 
-const TokenPageTitle = ({ tokenQuery, addressQuery, hash }: Props) => {
+const TokenPageTitle = ({ tokenQuery, addressQuery, verifiedInfoQuery, hash }: Props) => {
   const multichainContext = useMultichainContext();
   const addressHash = !tokenQuery.isPlaceholderData ? (tokenQuery.data?.address_hash || '') : '';
-
-  const verifiedInfoQuery = useApiQuery('contractInfo:token_verified_info', {
-    pathParams: { hash: addressHash, chainId: config.chain.id },
-    queryOptions: { enabled: Boolean(tokenQuery.data) && !tokenQuery.isPlaceholderData && config.features.verifiedTokens.isEnabled },
-  });
 
   const addressesForMetadataQuery = React.useMemo(() => ([ hash ].filter(Boolean)), [ hash ]);
   const addressMetadataQuery = useAddressMetadataInfoQuery(addressesForMetadataQuery);
@@ -61,7 +56,7 @@ const TokenPageTitle = ({ tokenQuery, addressQuery, hash }: Props) => {
     return [
       tokenQuery.data ? {
         slug: tokenQuery.data?.type,
-        name: getTokenTypeName(tokenQuery.data.type),
+        name: getTokenTypeName(tokenQuery.data.type, multichainContext?.chain?.app_config),
         tagType: 'custom' as const,
         ordinal: PREDEFINED_TAG_PRIORITY,
       } : undefined,
@@ -88,10 +83,12 @@ const TokenPageTitle = ({ tokenQuery, addressQuery, hash }: Props) => {
     tokenQuery.data,
     verifiedInfoQuery.data?.projectSector,
     hash,
+    multichainContext?.chain?.app_config,
   ]);
 
   const contentAfter = (
     <>
+      { tokenQuery.data && <TokenEntity.Reputation value={ tokenQuery.data.reputation } ml={ 0 }/> }
       { verifiedInfoQuery.data?.tokenAddress && (
         <Tooltip content={ `Information on this token has been verified by ${ config.chain.name }` }>
           <IconSvg name="certified" color="green.500" boxSize={ 6 } cursor="pointer"/>
@@ -100,6 +97,7 @@ const TokenPageTitle = ({ tokenQuery, addressQuery, hash }: Props) => {
       <EntityTags
         isLoading={ isLoading || (config.features.addressMetadata.isEnabled && addressMetadataQuery.isPending) }
         tags={ tags }
+        addressHash={ addressQuery.data?.hash }
         flexGrow={ 1 }
       />
     </>
@@ -143,8 +141,12 @@ const TokenPageTitle = ({ tokenQuery, addressQuery, hash }: Props) => {
         contentAfter={ contentAfter }
         secondRow={ secondRow }
       />
-      { !addressMetadataQuery.isPending &&
-        <AddressMetadataAlert tags={ addressMetadataQuery.data?.addresses?.[hash.toLowerCase()]?.tags } mt="-4px" mb={ 6 }/> }
+      { !addressMetadataQuery.isPending && (
+        <AddressAlerts
+          tags={ addressMetadataQuery.data?.addresses?.[hash.toLowerCase()]?.tags }
+          isScamToken={ tokenQuery.data?.reputation === 'scam' }
+        />
+      ) }
     </>
   );
 };

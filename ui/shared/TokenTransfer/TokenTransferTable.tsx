@@ -4,7 +4,6 @@ import type { TokenTransfer } from 'types/api/tokenTransfer';
 
 import { AddressHighlightProvider } from 'lib/contexts/addressHighlight';
 import { useMultichainContext } from 'lib/contexts/multichain';
-import { getChainDataForList } from 'lib/multichain/getChainDataForList';
 import { TableBody, TableColumnHeader, TableHeaderSticky, TableRoot, TableRow } from 'toolkit/chakra/table';
 import * as SocketNewItemsNotice from 'ui/shared/SocketNewItemsNotice';
 import TimeFormatToggle from 'ui/shared/time/TimeFormatToggle';
@@ -34,11 +33,11 @@ const TokenTransferTable = ({
   isLoading,
 }: Props) => {
   const multichainContext = useMultichainContext();
-  const chainData = getChainDataForList(multichainContext);
+  const chainData = multichainContext?.chain;
 
   return (
     <AddressHighlightProvider>
-      <TableRoot minW="950px">
+      <TableRoot minW={ chainData ? '1000px' : '950px' }>
         <TableHeaderSticky top={ top }>
           <TableRow>
             { showTxInfo && <TableColumnHeader width="48px"></TableColumnHeader> }

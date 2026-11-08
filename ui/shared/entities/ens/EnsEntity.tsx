@@ -14,10 +14,13 @@ import IconSvg from 'ui/shared/IconSvg';
 
 import { distributeEntityProps, getIconProps } from '../base/utils';
 
-type LinkProps = EntityBase.LinkBaseProps & Pick<EntityProps, 'domain'>;
+type LinkProps = EntityBase.LinkBaseProps & Pick<EntityProps, 'domain' | 'protocol'>;
 
 const Link = chakra((props: LinkProps) => {
-  const defaultHref = route({ pathname: '/name-domains/[name]', query: { name: props.domain } });
+  const defaultHref = route({
+    pathname: '/name-services/domains/[name]',
+    query: { name: props.domain, protocol_id: props.protocol?.id },
+  });
 
   return (
     <EntityBase.Link
@@ -32,7 +35,7 @@ const Link = chakra((props: LinkProps) => {
 type IconProps = Pick<EntityProps, 'protocol'> & EntityBase.IconBaseProps;
 
 const Icon = (props: IconProps) => {
-  const icon = <EntityBase.Icon { ...props } name={ 'name' in props ? props.name : 'ENS_slim' }/>;
+  const icon = <EntityBase.Icon { ...props } name={ 'name' in props ? props.name : 'ENS' }/>;
 
   if (props.protocol) {
     const styles = getIconProps(props);

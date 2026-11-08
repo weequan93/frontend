@@ -10,6 +10,7 @@ import { route } from 'nextjs-routes';
 
 import type { ResourceError } from 'lib/api/resources';
 import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
+import { formatZkEvmL2TxnBatchStatus } from 'lib/rollups/utils';
 import { Link } from 'toolkit/chakra/link';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import isCustomAppError from 'ui/shared/AppError/isCustomAppError';
@@ -21,6 +22,8 @@ import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
 import HashStringShortenDynamic from 'ui/shared/HashStringShortenDynamic';
 import PrevNext from 'ui/shared/PrevNext';
 import VerificationSteps from 'ui/shared/verificationSteps/VerificationSteps';
+
+const verificationSteps = ZKEVM_L2_TX_BATCH_STATUSES.map(formatZkEvmL2TxnBatchStatus);
 
 interface Props {
   query: UseQueryResult<ZkEvmL2TxnBatch, ResourceError>;
@@ -83,7 +86,11 @@ const ZkEvmL2TxnBatchDetails = ({ query }: Props) => {
         Status
       </DetailedInfo.ItemLabel>
       <DetailedInfo.ItemValue>
-        <VerificationSteps steps={ ZKEVM_L2_TX_BATCH_STATUSES } currentStep={ data.status } isLoading={ isPlaceholderData }/>
+        <VerificationSteps
+          steps={ verificationSteps }
+          currentStep={ formatZkEvmL2TxnBatchStatus(data.status) }
+          isLoading={ isPlaceholderData }
+        />
       </DetailedInfo.ItemValue>
 
       <DetailedInfo.ItemLabel
@@ -106,6 +113,7 @@ const ZkEvmL2TxnBatchDetails = ({ query }: Props) => {
             isLoading={ isPlaceholderData }
             hash={ data.verify_transaction_hash }
             maxW="100%"
+            noCopy
           />
         ) : <Text>Pending</Text> }
       </DetailedInfo.ItemValue>
@@ -164,6 +172,7 @@ const ZkEvmL2TxnBatchDetails = ({ query }: Props) => {
             isLoading={ isPlaceholderData }
             hash={ data.sequence_transaction_hash }
             maxW="100%"
+            noCopy
           />
         ) : <Text>Pending</Text> }
       </DetailedInfo.ItemValue>

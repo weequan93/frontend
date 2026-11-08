@@ -34,7 +34,7 @@ const DEFAULT_THEME_COLORS = {
       },
       bg: {
         _light: { value: '{colors.blue.50}' },
-        _dark: { value: '{colors.whiteAlpha.100}' },
+        _dark: { value: '{colors.whiteAlpha.50}' },
       },
     },
     option: {
@@ -58,6 +58,10 @@ const DEFAULT_THEME_COLORS = {
     primary: {
       _light: { value: '{colors.blue.600}' },
       _dark: { value: '{colors.blue.600}' },
+      text: {
+        _light: { value: '{colors.white}' },
+        _dark: { value: '{colors.white}' },
+      },
     },
   },
   link: {
@@ -279,6 +283,7 @@ const colors = {
   medium: { value: '#231F20' },
   reddit: { value: '#FF4500' },
   celo: { value: '#FCFF52' },
+  clusters: { value: '#DE6061' },
 
   // THEME COLORS
   theme: defaultsDeep(config.UI.colorTheme.overrides, DEFAULT_THEME_COLORS),

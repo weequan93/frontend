@@ -1,4 +1,4 @@
-export interface FlashblockItemApi {
+export interface FlashblockItemApiOptimism {
   payload_id: string;
   index: number;
   base?: {
@@ -23,4 +23,15 @@ export interface FlashblockItemApi {
   metadata: {
     receipts: Record<string, unknown>;
   };
+}
+
+export interface FlashblockItemApiMegaEth {
+  block_number: string;
+  block_timestamp: string;
+  gas_used: string;
+  index: string;
+  mini_block_number: number;
+  mini_block_timestamp: string;
+  receipts: Array<unknown>;
+  transactions: Array<unknown>;
 }

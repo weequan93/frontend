@@ -44,7 +44,7 @@ const TagShowcase = () => {
         <SectionHeader>Truncated</SectionHeader>
         <SamplesStack>
           <Sample label="truncated: true">
-            <Tag maxW="150px" truncated>Very very very very very looooooonggggg text</Tag>
+            <Tag maxW="150px" truncated>Very very very very very very very long text</Tag>
           </Sample>
         </SamplesStack>
       </Section>
@@ -63,11 +63,15 @@ const TagShowcase = () => {
         <SamplesStack>
           <Sample label="loading: true">
             <Tag loading>My tag</Tag>
-            <Tag maxW="150px" truncated loading>Very very very very very looooooonggggg text</Tag>
+            <Tag maxW="150px" truncated loading>Very very very very very very very long text</Tag>
+          </Sample>
+          <Sample label="loading: true, variant: select">
+            <Tag variant="select" loading>Default</Tag>
+            <Tag variant="select" selected loading>Selected</Tag>
           </Sample>
           <Sample label="loading: false">
             <Tag>My tag</Tag>
-            <Tag maxW="150px" truncated>Very very very very very looooooonggggg text</Tag>
+            <Tag maxW="150px" truncated>Very very very very very very very long text</Tag>
           </Sample>
         </SamplesStack>
       </Section>

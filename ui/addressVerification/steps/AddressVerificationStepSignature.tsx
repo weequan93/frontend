@@ -1,5 +1,4 @@
 import { Box, chakra, Flex } from '@chakra-ui/react';
-import { useAppKit } from '@reown/appkit/react';
 import React from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -18,6 +17,7 @@ import type { VerifiedAddress } from 'types/api/account';
 import config from 'configs/app';
 import useApiFetch from 'lib/api/useApiFetch';
 import shortenString from 'lib/shortenString';
+import useWallet from 'lib/web3/useWallet';
 import { Alert } from 'toolkit/chakra/alert';
 import { Button } from 'toolkit/chakra/button';
 import { Link } from 'toolkit/chakra/link';
@@ -39,8 +39,8 @@ interface Props extends AddressVerificationFormFirstStepFields, AddressCheckStat
 const AddressVerificationStepSignature = ({ address, signingMessage, contractCreator, contractOwner, onContinue, noWeb3Provider }: Props) => {
   const [ signMethod, setSignMethod ] = React.useState<SignMethod>(noWeb3Provider ? 'manual' : 'wallet');
 
-  const { open: openWeb3Modal } = useAppKit();
   const { isConnected } = useAccount();
+  const { openModal: openWeb3Modal } = useWallet({ source: 'Smart contracts' });
 
   const formApi = useForm<Fields>({
     mode: 'onBlur',
@@ -152,7 +152,7 @@ const AddressVerificationStepSignature = ({ address, signingMessage, contractCre
     );
   })();
 
-  const contactUsLink = <span>contact us <Link href="mailto:help@blockscout.com">help@blockscout.com</Link></span>;
+  const contactUsLink = <span>contact us <Link href="mailto:help@blockscout.com" rel="noopener noreferrer">help@blockscout.com</Link></span>;
 
   const rootError = (() => {
     switch (formState.errors.root?.type) {
@@ -199,7 +199,7 @@ const AddressVerificationStepSignature = ({ address, signingMessage, contractCre
         { rootError && <Alert status="warning" mb={ 6 }>{ rootError }</Alert> }
         <Box mb={ 8 }>
           <span>Please select the address to sign and copy the message and sign it using the Blockscout message provider of your choice. </span>
-          <Link href="https://docs.blockscout.com/for-users/my-account/verified-addresses/copy-and-sign-message" target="_blank">
+          <Link href="https://docs.blockscout.com/using-blockscout/my-account/verified-addresses/copy-and-sign-message" external noIcon>
             Additional instructions
           </Link>
           <span>. If you do not see your address here but are sure that you are the owner of the contract, kindly </span>

@@ -2,16 +2,17 @@ import type { Channel } from 'phoenix';
 import React from 'react';
 
 import type { Address } from 'types/api/address';
+import type { ClusterChainConfig } from 'types/multichain';
 
 import config from 'configs/app';
 import useApiQuery from 'lib/api/useApiQuery';
 import * as stubs from 'stubs/contract';
+import { ContentLoader } from 'toolkit/components/loaders/ContentLoader';
 import ContractDetails from 'ui/address/contract/ContractDetails';
 import ContractMethodsCustom from 'ui/address/contract/methods/ContractMethodsCustom';
 import ContractMethodsMudSystem from 'ui/address/contract/methods/ContractMethodsMudSystem';
 import ContractMethodsProxy from 'ui/address/contract/methods/ContractMethodsProxy';
 import ContractMethodsRegular from 'ui/address/contract/methods/ContractMethodsRegular';
-import ContentLoader from 'ui/shared/ContentLoader';
 
 import type { CONTRACT_MAIN_TAB_IDS } from './utils';
 import { CONTRACT_DETAILS_TAB_IDS } from './utils';
@@ -26,6 +27,7 @@ interface ContractTab {
 interface ReturnType {
   tabs: Array<ContractTab>;
   isLoading: boolean;
+  isPartiallyVerified?: boolean;
 }
 
 interface Props {
@@ -33,24 +35,24 @@ interface Props {
   isEnabled: boolean;
   hasMudTab?: boolean;
   channel?: Channel;
-  chainSlug?: string;
+  chain?: ClusterChainConfig;
 }
 
-export default function useContractTabs({ addressData, isEnabled, hasMudTab, channel, chainSlug }: Props): ReturnType {
+export default function useContractTabs({ addressData, isEnabled, hasMudTab, channel, chain }: Props): ReturnType {
   const contractQuery = useApiQuery('general:contract', {
     pathParams: { hash: addressData?.hash },
     queryOptions: {
-      enabled: isEnabled,
+      enabled: isEnabled && addressData?.is_contract,
       refetchOnMount: false,
       placeholderData: addressData?.is_verified ? stubs.CONTRACT_CODE_VERIFIED : stubs.CONTRACT_CODE_UNVERIFIED,
     },
-    chainSlug,
+    chain,
   });
 
   const mudSystemsQuery = useApiQuery('general:mud_systems', {
     pathParams: { hash: addressData?.hash },
     queryOptions: {
-      enabled: isEnabled && hasMudTab,
+      enabled: Boolean(isEnabled && hasMudTab && addressData?.is_contract),
       refetchOnMount: false,
       placeholderData: stubs.MUD_SYSTEMS,
     },
@@ -62,17 +64,17 @@ export default function useContractTabs({ addressData, isEnabled, hasMudTab, cha
 
   return React.useMemo(() => {
 
-    // TODO @tom2drum remove this condition once the API will return is_contract flag
-    if (isEnabled && !addressData?.is_contract) {
+    if (!addressData?.is_contract) {
       return {
         tabs: [
           {
             id: 'contract_code' as const,
             title: 'Code',
-            component: <div>Not a contract</div>,
+            component: <p>This address is not a contract on this chain.</p>,
           },
         ],
         isLoading: false,
+        isPartiallyVerified: undefined,
       };
     }
 
@@ -97,6 +99,7 @@ export default function useContractTabs({ addressData, isEnabled, hasMudTab, cha
               implementations={ verifiedImplementations }
               isLoading={ contractQuery.isPlaceholderData }
               proxyType={ addressData?.proxy_type }
+              conflictingImplementations={ contractQuery.data?.conflicting_implementations ?? undefined }
             />
           ),
         },
@@ -114,10 +117,10 @@ export default function useContractTabs({ addressData, isEnabled, hasMudTab, cha
         },
       ].filter(Boolean),
       isLoading: contractQuery.isPlaceholderData,
+      isPartiallyVerified: !contractQuery.isPlaceholderData ? contractQuery.data?.is_partially_verified || undefined : undefined,
     };
   }, [
     addressData,
-    isEnabled,
     contractQuery,
     channel,
     verifiedImplementations,

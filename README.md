@@ -8,6 +8,13 @@
 
 ## Running and configuring the app
 
+For DeriW, start with the [deployment guide](./docs/DERIW_DEPLOYMENT.md).
+It identifies the deployed v2.7.2 image, retained modules and safe configuration
+handoff. The [upgrade history](./docs/DERIW_V2_7_2_UPGRADE.md) retains earlier
+build and validation evidence. Use the backend's targeted rollout helper for
+the installed DeriW stack; the generic upstream example below is not its live
+configuration.
+
 App is distributed as a docker image. Here you can find information about the [package](https://github.com/blockscout/frontend/pkgs/container/frontend) and its recent [releases](https://github.com/blockscout/frontend/releases).
 
 You can configure your app by passing necessary environment variables when starting the container. See full list of ENVs and their description [here](./docs/ENVS.md).
@@ -18,7 +25,7 @@ docker run -p 3000:3000 --env-file <path-to-your-env-file> ghcr.io/blockscout/fr
 
 Alternatively, you can build your own docker image and run your app from that. Please follow this [guide](./docs/CUSTOM_BUILD.md).
 
-For more information on migrating from the previous frontend, please see the [frontend migration docs](https://docs.blockscout.com/for-developers/frontend-migration).
+For more information on migrating from the previous frontend, please see the [frontend migration docs](https://docs.blockscout.com/setup/deployment/frontend-migration).
 
 ## Contributing
 
@@ -28,15 +35,11 @@ See our [Contribution guide](./docs/CONTRIBUTING.md) for pull request protocol. 
 - [App ENVs list](./docs/ENVS.md)
 - [Contribution guide](./docs/CONTRIBUTING.md)
 - [Making a custom build](./docs/CUSTOM_BUILD.md)
-- [Frontend migration guide](https://docs.blockscout.com/for-developers/frontend-migration)
-- [Manual deployment guide with backend and microservices](https://docs.blockscout.com/for-developers/deployment/manual-deployment-guide)
+- [Frontend migration guide](https://docs.blockscout.com/setup/deployment/frontend-migration)
+- [Manual deployment guide with backend and microservices](https://docs.blockscout.com/setup/deployment/manual-deployment-guide)
 
 ## License
 
 [![License: GPL v3.0](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
-
-## deriw
-$ docker buildx build --platform linux/amd64 . --tag quanquanah/blockscout-frontend:dev
-$ docker image push quanquanah/blockscout-frontend:dev 

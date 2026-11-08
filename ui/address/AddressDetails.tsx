@@ -1,4 +1,5 @@
 import { Box, Text } from '@chakra-ui/react';
+import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -7,6 +8,7 @@ import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
 import getNetworkValidationActionText from 'lib/networks/getNetworkValidationActionText';
 import getNetworkValidatorTitle from 'lib/networks/getNetworkValidatorTitle';
 import getQueryParamString from 'lib/router/getQueryParamString';
+import { Skeleton } from 'toolkit/chakra/skeleton';
 import AddressCounterItem from 'ui/address/details/AddressCounterItem';
 import ServiceDegradationWarning from 'ui/shared/alerts/ServiceDegradationWarning';
 import isCustomAppError from 'ui/shared/AppError/isCustomAppError';
@@ -23,16 +25,15 @@ import Address3rdPartyWidgets from './Address3rdPartyWidgets';
 import useAddress3rdPartyWidgets from './address3rdPartyWidgets/useAddress3rdPartyWidgets';
 import AddressAlternativeFormat from './details/AddressAlternativeFormat';
 import AddressBalance from './details/AddressBalance';
+import AddressCeloAccount from './details/AddressCeloAccount';
 import AddressImplementations from './details/AddressImplementations';
 import AddressNameInfo from './details/AddressNameInfo';
 import AddressNetWorth from './details/AddressNetWorth';
-import AddressSaveOnGas from './details/AddressSaveOnGas';
 import FilecoinActorTag from './filecoin/FilecoinActorTag';
 import TokenSelect from './tokenSelect/TokenSelect';
 import type { AddressCountersQuery } from './utils/useAddressCountersQuery';
 import type { AddressQuery } from './utils/useAddressQuery';
 import useDeriwAddressAccountQuery from './utils/useDeriwAddressAccountQuery';
-import { Skeleton } from 'toolkit/chakra/skeleton';
 
 interface Props {
   addressQuery: AddressQuery;
@@ -44,7 +45,6 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
   const router = useRouter();
 
   const addressHash = getQueryParamString(router.query.hash);
-
 
   const deriwAddressQuery = useDeriwAddressAccountQuery({ address: addressHash, isEnabled: true });
 
@@ -67,6 +67,7 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
     has_token_transfers: true,
     has_validated_blocks: false,
     filecoin: undefined,
+    celo: undefined,
     creator_filecoin_robust_address: null,
     creator_address_hash: null,
   }), [ addressHash ]);
@@ -95,6 +96,11 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
     <>
       { addressQuery.isDegradedData && <ServiceDegradationWarning isLoading={ isLoading } mb={ 6 }/> }
       <DetailedInfo.Container>
+
+        { data.celo?.account && (
+          <AddressCeloAccount data={ data.celo.account } isLoading={ isLoading }/>
+        ) }
+
         <AddressAlternativeFormat isLoading={ isLoading } addressHash={ addressHash }/>
 
         { data.filecoin?.id && (
@@ -158,7 +164,7 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
                 noIcon
               />
               <Text whiteSpace="pre"> at txn </Text>
-              <TxEntity hash={ data.creation_transaction_hash } truncation="constant" noIcon noCopy={ false }/>
+              <TxEntity hash={ data.creation_transaction_hash } truncation="constant" noIcon/>
               { data.creation_status && <ContractCreationStatus status={ data.creation_status } ml={{ base: 0, lg: 2 }}/> }
             </DetailedInfo.ItemValue>
           </>
@@ -261,12 +267,6 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
                 />
               ) :
                 0 }
-              { !countersQuery.isPlaceholderData && countersQuery.data?.gas_usage_count && (
-                <AddressSaveOnGas
-                  gasUsed={ countersQuery.data.gas_usage_count }
-                  address={ data.hash }
-                />
-              ) }
             </DetailedInfo.ItemValue>
           </>
         ) }
@@ -315,18 +315,18 @@ const AddressDetails = ({ addressQuery, countersQuery, isLoading }: Props) => {
           deriwAddressQuery.balance && (
             <>
               <DetailedInfo.ItemLabel
-                hint={ `Deriw position value + Account USD balance` }
+                hint="Deriw position value + Account USD balance"
                 isLoading={ isLoading || countersQuery.isPlaceholderData || deriwAddressQuery.isPlaceholderData }
               >
                 Account Value
               </DetailedInfo.ItemLabel>
               <DetailedInfo.ItemValue>
                 <Skeleton loading={ isLoading || countersQuery.isPlaceholderData || deriwAddressQuery.isPlaceholderData }>
-                  ${deriwAddressQuery.isPlaceholderData ? '0' : Number(deriwAddressQuery.balance).toLocaleString()}
+                  ${ deriwAddressQuery.isPlaceholderData ? '0.00' : new BigNumber(deriwAddressQuery.balance).toFormat(2) }
                 </Skeleton>
               </DetailedInfo.ItemValue>
             </>
-          ) 
+          )
         }
 
         <DetailedInfoSponsoredItem isLoading={ isLoading }/>

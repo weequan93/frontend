@@ -4,19 +4,24 @@ import config from 'configs/app';
 import type { ImageProps } from 'toolkit/chakra/image';
 import { Image } from 'toolkit/chakra/image';
 import { Link } from 'toolkit/chakra/link';
+import { Skeleton } from 'toolkit/chakra/skeleton';
 import { Tooltip } from 'toolkit/chakra/tooltip';
 
 interface Props extends ImageProps {
   chainConfig?: typeof config;
-  variant?: 'outline' | 'filled';
+  isLoading?: boolean;
 }
 
-const RollupStageBadge = ({ chainConfig = config, variant = 'outline', ...props }: Props) => {
+const RollupStageBadge = ({ chainConfig = config, isLoading, ...props }: Props) => {
 
   const feature = chainConfig.features.rollup;
 
   if (!feature.isEnabled || chainConfig.chain.isTestnet) {
     return null;
+  }
+
+  if (isLoading) {
+    return <Skeleton w="42px" h="14px" { ...props } loading/>;
   }
 
   switch (feature.stageIndex) {
@@ -31,18 +36,10 @@ const RollupStageBadge = ({ chainConfig = config, variant = 'outline', ...props 
         </>
       );
 
-      const src = (() => {
-        if (variant === 'filled') {
-          return feature.stageIndex === '1' ? '/static/labels/stage-1-filled.svg' : '/static/labels/stage-2-filled.svg';
-        }
-
-        return feature.stageIndex === '1' ? '/static/labels/stage-1.svg' : '/static/labels/stage-2.svg';
-      })();
-
       return (
         <Tooltip content={ tooltipContent } interactive>
           <Image
-            src={ src }
+            src={ feature.stageIndex === '1' ? '/static/labels/stage-1.svg' : '/static/labels/stage-2.svg' }
             h="14px"
             w="42px"
             { ...props }

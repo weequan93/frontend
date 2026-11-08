@@ -22,12 +22,19 @@ import EnsEntity from 'ui/shared/entities/ens/EnsEntity';
 import IconSvg from 'ui/shared/IconSvg';
 import PageTitle from 'ui/shared/Page/PageTitle';
 
+const feature = config.features.nameServices;
+const availableProtocols = feature.isEnabled && feature.ens.isEnabled ? feature.ens.protocols : [];
+
 const NameDomain = () => {
   const router = useRouter();
   const domainName = getQueryParamString(router.query.name);
+  const protocolId = getQueryParamString(router.query.protocol_id) || availableProtocols[0];
 
   const infoQuery = useApiQuery('bens:domain_info', {
-    pathParams: { name: domainName, chainId: config.chain.id },
+    pathParams: { name: domainName },
+    queryParams: {
+      protocol_id: protocolId,
+    },
     queryOptions: {
       placeholderData: ENS_DOMAIN,
     },
@@ -69,7 +76,10 @@ const NameDomain = () => {
             <Link
               flexShrink={ 0 }
               display="inline-flex"
-              href={ route({ pathname: '/name-domains', query: { owned_by: 'true', resolved_to: 'true', address: infoQuery.data?.resolved_address?.hash } }) }
+              href={ route({
+                pathname: '/name-services',
+                query: { tab: 'domains', owned_by: 'true', resolved_to: 'true', address: infoQuery.data?.resolved_address?.hash },
+              }) }
             >
               <IconSvg name="search" boxSize={ 5 } isLoading={ isLoading }/>
             </Link>

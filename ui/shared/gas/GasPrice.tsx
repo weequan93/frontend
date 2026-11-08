@@ -23,7 +23,7 @@ interface Props {
 
 const GasPrice = ({ data, prefix, className, unitMode = 'primary' }: Props) => {
   const multichainContext = useMultichainContext();
-  const feature = multichainContext?.chain?.config.features.gasTracker || config.features.gasTracker;
+  const feature = multichainContext?.chain?.app_config.features.gasTracker || config.features.gasTracker;
 
   if (!data || !feature.isEnabled) {
     return null;
@@ -40,7 +40,7 @@ const GasPrice = ({ data, prefix, className, unitMode = 'primary' }: Props) => {
 
       const primaryUnitsValue = data[UNITS_TO_API_FIELD_MAP[primaryUnits]];
       if (!primaryUnitsValue) {
-        // in this case we display values in secondary untis in primary mode as fallback
+        // in this case we display values in secondary units in primary mode as fallback
         return null;
       }
 

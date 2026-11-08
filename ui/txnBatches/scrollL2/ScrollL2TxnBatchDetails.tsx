@@ -8,6 +8,7 @@ import { route } from 'nextjs-routes';
 
 import type { ResourceError } from 'lib/api/resources';
 import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
+import { layerLabels } from 'lib/rollups/utils';
 import { Link } from 'toolkit/chakra/link';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import isCustomAppError from 'ui/shared/AppError/isCustomAppError';
@@ -19,7 +20,6 @@ import BlockEntityL1 from 'ui/shared/entities/block/BlockEntityL1';
 import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
 import PrevNext from 'ui/shared/PrevNext';
 import ScrollL2TxnBatchStatus from 'ui/shared/statusTag/ScrollL2TxnBatchStatus';
-
 interface Props {
   query: UseQueryResult<ScrollL2TxnBatch, ResourceError>;
 }
@@ -60,7 +60,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
     >
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Batch number indicates the length of batches produced by grouping L3 blocks to be proven on L2"
+        hint={ `Batch number indicates the length of batches produced by grouping ${ layerLabels.current } blocks to be proven on ${ layerLabels.parent }` }
       >
         Txn batch number
       </DetailedInfo.ItemLabel>
@@ -100,7 +100,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Date and time at which batch is finalized to L2"
+        hint={ `Date and time at which batch is finalized to ${ layerLabels.parent }` }
       >
         Finalized timestamp
       </DetailedInfo.ItemLabel>
@@ -129,7 +129,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Number of L3 blocks in this batch"
+        hint={ `Number of ${ layerLabels.current } blocks in this batch` }
       >
         Blocks
       </DetailedInfo.ItemLabel>
@@ -141,7 +141,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Date and time at which batch is committed to L2"
+        hint={ `Date and time at which batch is committed to ${ layerLabels.parent }` }
       >
         Committed timestamp
       </DetailedInfo.ItemLabel>
@@ -154,7 +154,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Hash of L2 transaction this batch was committed in"
+        hint={ `Hash of ${ layerLabels.parent } transaction this batch was committed in` }
       >
         Committed transaction hash
       </DetailedInfo.ItemLabel>
@@ -163,12 +163,14 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
           isLoading={ isPlaceholderData }
           hash={ data.commitment_transaction.hash }
           maxW="100%"
+          noCopy
+
         />
       </DetailedInfo.ItemValue>
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="L2 block that includes transaction with this batch commitment"
+        hint={ `${ layerLabels.parent } block that includes transaction with this batch commitment` }
       >
         Committed block
       </DetailedInfo.ItemLabel>
@@ -181,7 +183,7 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Hash of L2 transaction this batch was finalized in"
+        hint={ `Hash of ${ layerLabels.parent } transaction this batch was finalized in` }
       >
         Finalized transaction hash
       </DetailedInfo.ItemLabel>
@@ -191,13 +193,14 @@ const ScrollL2TxnBatchDetails = ({ query }: Props) => {
             isLoading={ isPlaceholderData }
             hash={ data.confirmation_transaction.hash }
             maxW="100%"
+            noCopy
           />
         ) : <Skeleton loading={ isPlaceholderData } display="inline-block">Pending</Skeleton> }
       </DetailedInfo.ItemValue>
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="L2 block that includes transaction with this batch finalization data"
+        hint={ `${ layerLabels.parent } block that includes transaction with this batch finalization data` }
       >
         Finalized block
       </DetailedInfo.ItemLabel>

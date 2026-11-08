@@ -1,4 +1,4 @@
-import { chakra } from '@chakra-ui/react';
+import { chakra, Flex } from '@chakra-ui/react';
 import { capitalize } from 'es-toolkit';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -13,21 +13,24 @@ import { useMultichainContext } from 'lib/contexts/multichain';
 import throwOnAbsentParamError from 'lib/errors/throwOnAbsentParamError';
 import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
 import useIsMobile from 'lib/hooks/useIsMobile';
-import getNetworkValidationActionText from 'lib/networks/getNetworkValidationActionText';
+import getNetworkValidatorTitle from 'lib/networks/getNetworkValidatorTitle';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import RoutedTabs from 'toolkit/components/RoutedTabs/RoutedTabs';
 import BlockCeloEpochTag from 'ui/block/BlockCeloEpochTag';
+import BlockDeposits from 'ui/block/BlockDeposits';
 import BlockDetails from 'ui/block/BlockDetails';
 import BlockInternalTxs from 'ui/block/BlockInternalTxs';
 import BlockWithdrawals from 'ui/block/BlockWithdrawals';
 import useBlockBlobTxsQuery from 'ui/block/useBlockBlobTxsQuery';
+import useBlockDepositsQuery from 'ui/block/useBlockDepositsQuery';
 import useBlockInternalTxsQuery from 'ui/block/useBlockInternalTxsQuery';
 import useBlockQuery from 'ui/block/useBlockQuery';
 import useBlockTxsQuery from 'ui/block/useBlockTxsQuery';
 import useBlockWithdrawalsQuery from 'ui/block/useBlockWithdrawalsQuery';
 import TextAd from 'ui/shared/ad/TextAd';
 import ServiceDegradationWarning from 'ui/shared/alerts/ServiceDegradationWarning';
+import BlockPendingUpdateAlert from 'ui/shared/block/BlockPendingUpdateAlert';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import * as BlockEntity from 'ui/shared/entities/block/BlockEntity';
 import NetworkExplorers from 'ui/shared/NetworkExplorers';
@@ -43,6 +46,8 @@ const TAB_LIST_PROPS = {
 };
 const TABS_HEIGHT = 88;
 
+const beaconChainFeature = config.features.beaconChain;
+
 const BlockPageContent = () => {
   const router = useRouter();
   const isMobile = useIsMobile();
@@ -53,12 +58,14 @@ const BlockPageContent = () => {
   const blockQuery = useBlockQuery({ heightOrHash });
   const blockTxsQuery = useBlockTxsQuery({ heightOrHash, blockQuery, tab });
   const blockWithdrawalsQuery = useBlockWithdrawalsQuery({ heightOrHash, blockQuery, tab });
+  const blockDepositsQuery = useBlockDepositsQuery({ heightOrHash, blockQuery, tab });
   const blockBlobTxsQuery = useBlockBlobTxsQuery({ heightOrHash, blockQuery, tab });
   const blockInternalTxsQuery = useBlockInternalTxsQuery({ heightOrHash, blockQuery, tab });
 
   const hasPagination = !isMobile && (
     (tab === 'txs' && blockTxsQuery.pagination.isVisible) ||
     (tab === 'withdrawals' && blockWithdrawalsQuery.pagination.isVisible) ||
+    (tab === 'deposits' && blockDepositsQuery.pagination.isVisible) ||
     (tab === 'internal_txs' && blockInternalTxsQuery.pagination.isVisible)
   );
 
@@ -68,7 +75,10 @@ const BlockPageContent = () => {
       title: 'Details',
       component: (
         <>
-          { blockQuery.isDegradedData && <ServiceDegradationWarning isLoading={ blockQuery.isPlaceholderData } mb={ 6 }/> }
+          <Flex rowGap={{ base: 1, lg: 2 }} mb={{ base: 3, lg: 6 }} flexDir="column">
+            { blockQuery.isDegradedData && <ServiceDegradationWarning isLoading={ blockQuery.isPlaceholderData }/> }
+            { blockQuery.data?.is_pending_update && <BlockPendingUpdateAlert/> }
+          </Flex>
           <BlockDetails query={ blockQuery }/>
         </>
       ),
@@ -78,27 +88,38 @@ const BlockPageContent = () => {
       title: 'Transactions',
       component: (
         <>
-          { blockTxsQuery.isDegradedData && <ServiceDegradationWarning isLoading={ blockTxsQuery.isPlaceholderData } mb={ 6 }/> }
+          { blockTxsQuery.isDegradedData && <ServiceDegradationWarning isLoading={ blockTxsQuery.isPlaceholderData } mb={{ base: 3, lg: 6 }}/> }
           <TxsWithFrontendSorting query={ blockTxsQuery } showBlockInfo={ false } top={ hasPagination ? TABS_HEIGHT : 0 }/>
         </>
       ),
     },
-    blockQuery.data?.internal_transactions_count ? {
+    {
       id: 'internal_txs',
       title: 'Internal txns',
       component: (
         <>
-          { blockTxsQuery.isDegradedData && <ServiceDegradationWarning isLoading={ blockTxsQuery.isPlaceholderData } mb={ 6 }/> }
+          { blockTxsQuery.isDegradedData && <ServiceDegradationWarning isLoading={ blockTxsQuery.isPlaceholderData } mb={{ base: 3, lg: 6 }}/> }
           <BlockInternalTxs query={ blockInternalTxsQuery } top={ hasPagination ? TABS_HEIGHT : 0 }/>
         </>
       ),
-    } : null,
-    config.features.dataAvailability.isEnabled && blockQuery.data?.blob_transaction_count ?
+    },
+    config.features.dataAvailability.isEnabled && blockQuery.data?.blob_transactions_count ?
       {
         id: 'blob_txs',
         title: 'Blob txns',
         component: (
           <TxsWithFrontendSorting query={ blockBlobTxsQuery } showBlockInfo={ false }/>
+        ),
+      } : null,
+    beaconChainFeature.isEnabled && !beaconChainFeature.withdrawalsOnly && Boolean(blockQuery.data?.beacon_deposits_count) ?
+      {
+        id: 'deposits',
+        title: 'Deposits',
+        component: (
+          <>
+            { blockDepositsQuery.isDegradedData && <ServiceDegradationWarning isLoading={ blockDepositsQuery.isPlaceholderData } mb={{ base: 3, lg: 6 }}/> }
+            <BlockDeposits blockDepositsQuery={ blockDepositsQuery }/>
+          </>
         ),
       } : null,
     config.features.beaconChain.isEnabled && Boolean(blockQuery.data?.withdrawals_count) ?
@@ -107,18 +128,21 @@ const BlockPageContent = () => {
         title: 'Withdrawals',
         component: (
           <>
-            { blockWithdrawalsQuery.isDegradedData && <ServiceDegradationWarning isLoading={ blockWithdrawalsQuery.isPlaceholderData } mb={ 6 }/> }
+            { blockWithdrawalsQuery.isDegradedData &&
+              <ServiceDegradationWarning isLoading={ blockWithdrawalsQuery.isPlaceholderData } mb={{ base: 3, lg: 6 }}/> }
             <BlockWithdrawals blockWithdrawalsQuery={ blockWithdrawalsQuery }/>
           </>
         ),
       } : null,
-  ].filter(Boolean)), [ blockBlobTxsQuery, blockInternalTxsQuery, blockQuery, blockTxsQuery, blockWithdrawalsQuery, hasPagination ]);
+  ].filter(Boolean)), [ blockBlobTxsQuery, blockDepositsQuery, blockInternalTxsQuery, blockQuery, blockTxsQuery, blockWithdrawalsQuery, hasPagination ]);
 
   let pagination;
   if (tab === 'txs') {
     pagination = blockTxsQuery.pagination;
   } else if (tab === 'withdrawals') {
     pagination = blockWithdrawalsQuery.pagination;
+  } else if (tab === 'deposits') {
+    pagination = blockDepositsQuery.pagination;
   } else if (tab === 'internal_txs') {
     pagination = blockInternalTxsQuery.pagination;
   }
@@ -126,7 +150,7 @@ const BlockPageContent = () => {
   throwOnAbsentParamError(heightOrHash);
 
   if (blockQuery.isError) {
-    if (!blockQuery.isDegradedData && blockQuery.error.status === 404 && !heightOrHash.startsWith('0x')) {
+    if (!blockQuery.isDegradedData && blockQuery.error.status === 404 && !heightOrHash.startsWith('0x') && blockQuery.isFutureBlock) {
       const url = routeParams({ pathname: '/block/countdown/[height]', query: { height: heightOrHash } }, multichainContext);
       router.push(url, undefined, { shallow: true });
       return null;
@@ -164,7 +188,7 @@ const BlockPageContent = () => {
           fontWeight={ 500 }
         >
           <chakra.span flexShrink={ 0 }>
-            { `${ capitalize(getNetworkValidationActionText()) } by` }
+            { capitalize(getNetworkValidatorTitle()) }
           </chakra.span>
           <AddressEntity address={ blockQuery.data.miner }/>
         </Skeleton>

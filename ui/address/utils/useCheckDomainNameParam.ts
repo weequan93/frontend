@@ -6,16 +6,18 @@ import useApiQuery from 'lib/api/useApiQuery';
 
 const DOMAIN_NAME_REGEXP = /.\../;
 
+const feature = config.features.nameServices;
+
 export default function useCheckDomainNameParam(hashOrDomainName: string) {
   const router = useRouter();
   const maybeDomainName = DOMAIN_NAME_REGEXP.test(hashOrDomainName);
-  const isQueryEnabled = config.features.nameService.isEnabled && maybeDomainName;
+  const isQueryEnabled = feature.isEnabled && feature.ens.isEnabled && maybeDomainName;
   const [ isLoading, setIsLoading ] = React.useState(isQueryEnabled);
 
   const domainLookupQuery = useApiQuery('bens:domains_lookup', {
-    pathParams: { chainId: config.chain.id },
     queryParams: {
       name: hashOrDomainName,
+      protocols: feature.isEnabled && feature.ens.isEnabled ? feature.ens.protocols : undefined,
       only_active: false,
     },
     queryOptions: {

@@ -32,8 +32,13 @@ Ensure you have the following peer dependencies installed:
 {
   "dependencies": {
     "@blockscout/ui-toolkit": "latest",
-    "@chakra-ui/react": ">=3.15.0",
+    "@chakra-ui/react": ">=3.33.0",
     "@emotion/react": ">=11.14.0",
+    "@uidotdev/usehooks": ">=2.4.1",
+    "d3": ">=7.6.1",
+    "dayjs": ">=1.11.5",
+    "dom-to-image": ">=2.6.0",
+    "es-toolkit": ">=1.39.10",
     "next": ">=15.2.3",
     "next-themes": ">=0.4.4",
     "react": ">=18.3.1",
@@ -41,7 +46,7 @@ Ensure you have the following peer dependencies installed:
     "react-hook-form": ">=7.52.1"
   },
   "devDependencies": {
-    "@chakra-ui/cli": ">=3.15.0",
+    "@chakra-ui/cli": ">=3.33.0",
     "@types/node": "^20",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",

@@ -3,7 +3,8 @@ import React from 'react';
 
 import type { OptimisticL2BlobTypeEip4844 } from 'types/api/optimisticL2';
 
-import dayjs from 'lib/date/dayjs';
+import { layerLabels } from 'lib/rollups/utils';
+import DetailedInfoTimestamp from 'ui/shared/DetailedInfo/DetailedInfoTimestamp';
 import BlobEntityL1 from 'ui/shared/entities/blob/BlobEntityL1';
 import TxEntityL1 from 'ui/shared/entities/tx/TxEntityL1';
 
@@ -25,12 +26,12 @@ const OptimisticL2TxnBatchBlobEip4844 = ({ blobs, isLoading }: Props) => {
               <BlobEntityL1 hash={ blob.hash }/>
             </GridItem>
             <GridItem fontWeight={ 600 }>Timestamp</GridItem>
-            <GridItem whiteSpace="normal">
-              { dayjs(blob.l1_timestamp).fromNow() } | { dayjs(blob.l1_timestamp).format('llll') }
-            </GridItem>
-            <GridItem fontWeight={600}>L2 txn hash</GridItem>
             <GridItem overflow="hidden">
-              <TxEntityL1 hash={ blob.l1_transaction_hash } noIcon noCopy={ false }/>
+              <DetailedInfoTimestamp timestamp={ blob.l1_timestamp } isLoading={ isLoading } flexWrap={{ base: 'wrap', lg: 'nowrap' }}/>
+            </GridItem>
+            <GridItem fontWeight={ 600 }>{ layerLabels.parent } txn hash</GridItem>
+            <GridItem overflow="hidden">
+              <TxEntityL1 hash={ blob.l1_transaction_hash } noIcon/>
             </GridItem>
           </OptimisticL2TxnBatchBlobWrapper>
         );

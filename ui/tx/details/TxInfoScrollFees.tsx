@@ -1,15 +1,14 @@
 import { Text } from '@chakra-ui/react';
-import BigNumber from 'bignumber.js';
 import React from 'react';
 
 import type { Transaction } from 'types/api/transaction';
 
-import { currencyUnits } from 'lib/units';
+import { layerLabels } from 'lib/rollups/utils';
 import { Skeleton } from 'toolkit/chakra/skeleton';
-import { WEI_IN_GWEI } from 'toolkit/utils/consts';
-import CurrencyValue from 'ui/shared/CurrencyValue';
 import * as DetailedInfo from 'ui/shared/DetailedInfo/DetailedInfo';
+import DetailedInfoNativeCoinValue from 'ui/shared/DetailedInfo/DetailedInfoNativeCoinValue';
 import TextSeparator from 'ui/shared/TextSeparator';
+import NativeCoinValue from 'ui/shared/value/NativeCoinValue';
 
 type Props = {
   data: Transaction;
@@ -23,38 +22,36 @@ export const TxInfoScrollFees = ({ data, isLoading }: Props) => {
         <>
           <DetailedInfo.ItemLabel
 
-            hint="L2 fee that pays for rollup costs"
+            hint={ `${ layerLabels.parent } fee that pays for rollup costs` }
             isLoading={ isLoading }
           >
-            L2 data fee
+            { layerLabels.parent } data fee
           </DetailedInfo.ItemLabel>
-          <DetailedInfo.ItemValue>
-            <CurrencyValue
-              value={ data.scroll?.l1_fee }
-              currency={ currencyUnits.ether }
-              exchangeRate={ data.exchange_rate }
-              flexWrap="wrap"
-            />
-          </DetailedInfo.ItemValue>
+          <DetailedInfoNativeCoinValue
+            amount={ data.scroll?.l1_fee }
+            exchangeRate={ data.exchange_rate }
+            historicalExchangeRate={ data.historic_exchange_rate }
+            hasExchangeRateToggle
+            loading={ isLoading }
+          />
         </>
       ) }
 
       { data.scroll?.l2_fee !== undefined && (
         <>
           <DetailedInfo.ItemLabel
-            hint="L3 execution fee"
+            hint={ `${ layerLabels.current } execution fee` }
             isLoading={ isLoading }
           >
             Execution fee
           </DetailedInfo.ItemLabel>
-          <DetailedInfo.ItemValue>
-            <CurrencyValue
-              value={ data.scroll?.l2_fee.value }
-              currency={ currencyUnits.ether }
-              exchangeRate={ data.exchange_rate }
-              flexWrap="wrap"
-            />
-          </DetailedInfo.ItemValue>
+          <DetailedInfoNativeCoinValue
+            amount={ data.scroll?.l2_fee.value }
+            exchangeRate={ data.exchange_rate }
+            historicalExchangeRate={ data.historic_exchange_rate }
+            hasExchangeRateToggle
+            loading={ isLoading }
+          />
         </>
       ) }
 
@@ -64,16 +61,15 @@ export const TxInfoScrollFees = ({ data, isLoading }: Props) => {
             hint="Commitment scalar"
             isLoading={ isLoading }
           >
-            L2 commit scalar
+            { layerLabels.parent } commit scalar
           </DetailedInfo.ItemLabel>
-          <DetailedInfo.ItemValue>
-            <CurrencyValue
-              value={ String(data.scroll?.l1_fee_commit_scalar) }
-              currency={ currencyUnits.ether }
-              exchangeRate={ data.exchange_rate }
-              flexWrap="wrap"
-            />
-          </DetailedInfo.ItemValue>
+          <DetailedInfoNativeCoinValue
+            amount={ String(data.scroll?.l1_fee_commit_scalar) }
+            exchangeRate={ data.exchange_rate }
+            historicalExchangeRate={ data.historic_exchange_rate }
+            hasExchangeRateToggle
+            loading={ isLoading }
+          />
         </>
       ) }
 
@@ -83,40 +79,49 @@ export const TxInfoScrollFees = ({ data, isLoading }: Props) => {
             hint="Additional gas overhead of a data commitment transaction"
             isLoading={ isLoading }
           >
-            L2 Fee Overhead
+            { layerLabels.parent } Fee Overhead
           </DetailedInfo.ItemLabel>
-          <DetailedInfo.ItemValue>
-            <Skeleton loading={ isLoading }>
-              <CurrencyValue
-                value={ String(data.scroll?.l1_fee_overhead) }
-                currency={ currencyUnits.ether }
-                exchangeRate={ data.exchange_rate }
-                flexWrap="wrap"
-              />
-            </Skeleton>
-          </DetailedInfo.ItemValue>
+          <DetailedInfoNativeCoinValue
+            amount={ String(data.scroll?.l1_fee_overhead) }
+            exchangeRate={ data.exchange_rate }
+            historicalExchangeRate={ data.historic_exchange_rate }
+            hasExchangeRateToggle
+            loading={ isLoading }
+          />
         </>
       ) }
       { (data.scroll?.l1_base_fee !== undefined || data.scroll?.l1_fee_scalar !== undefined) && (
         <>
           <DetailedInfo.ItemLabel
-            hint="L2 gas fees"
+            hint={ `${ layerLabels.parent } gas fees` }
             isLoading={ isLoading }
           >
-            L2 gas fees
+            { layerLabels.parent } gas fees
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             { data.scroll?.l1_base_fee !== undefined && (
               <Skeleton loading={ isLoading }>
                 <Text as="span" fontWeight="500">Base: </Text>
-                <Text fontWeight="600" as="span">{ BigNumber(data.scroll?.l1_base_fee || 0).dividedBy(WEI_IN_GWEI).toFixed() }</Text>
+                <NativeCoinValue
+                  amount={ String(data.scroll?.l1_base_fee || 0) }
+                  units="gwei"
+                  unitsTooltip="wei"
+                  noSymbol
+                  fontWeight="600"
+                />
               </Skeleton>
             ) }
             { data.scroll?.l1_fee_scalar !== undefined && (
               <Skeleton loading={ isLoading }>
                 <TextSeparator/>
                 <Text as="span" fontWeight="500">Scalar: </Text>
-                <Text fontWeight="600" as="span">{ BigNumber(data.scroll?.l1_fee_scalar || 0).dividedBy(WEI_IN_GWEI).toFixed() }</Text>
+                <NativeCoinValue
+                  amount={ String(data.scroll?.l1_fee_scalar || 0) }
+                  units="gwei"
+                  unitsTooltip="wei"
+                  noSymbol
+                  fontWeight="600"
+                />
               </Skeleton>
             ) }
           </DetailedInfo.ItemValue>
@@ -125,23 +130,35 @@ export const TxInfoScrollFees = ({ data, isLoading }: Props) => {
       { (data.scroll?.l1_blob_base_fee !== undefined || data.scroll?.l1_fee_blob_scalar !== undefined) && (
         <>
           <DetailedInfo.ItemLabel
-            hint="L2 blob fees"
+            hint={ `${ layerLabels.parent } blob fees` }
             isLoading={ isLoading }
           >
-            L2 blob fees
+            { layerLabels.parent } blob fees
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             { data.scroll?.l1_blob_base_fee !== undefined && (
               <Skeleton loading={ isLoading }>
                 <Text as="span" fontWeight="500">Base: </Text>
-                <Text fontWeight="600" as="span">{ BigNumber(data.scroll?.l1_blob_base_fee || 0).dividedBy(WEI_IN_GWEI).toFixed() }</Text>
+                <NativeCoinValue
+                  amount={ String(data.scroll?.l1_blob_base_fee || 0) }
+                  units="gwei"
+                  unitsTooltip="wei"
+                  noSymbol
+                  fontWeight="600"
+                />
               </Skeleton>
             ) }
             { data.scroll?.l1_fee_blob_scalar !== undefined && (
               <Skeleton loading={ isLoading }>
                 <TextSeparator/>
                 <Text as="span" fontWeight="500">Scalar: </Text>
-                <Text fontWeight="600" as="span">{ BigNumber(data.scroll?.l1_fee_blob_scalar || 0).dividedBy(WEI_IN_GWEI).toFixed() }</Text>
+                <NativeCoinValue
+                  amount={ String(data.scroll?.l1_fee_blob_scalar || 0) }
+                  units="gwei"
+                  unitsTooltip="wei"
+                  noSymbol
+                  fontWeight="600"
+                />
               </Skeleton>
             ) }
           </DetailedInfo.ItemValue>

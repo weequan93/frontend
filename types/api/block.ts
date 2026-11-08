@@ -44,6 +44,8 @@ export interface Block {
   transaction_fees: string | null;
   uncles_hashes: Array<string>;
   withdrawals_count?: number;
+  beacon_deposits_count?: number;
+  is_pending_update?: boolean;
   // ROOTSTOCK FIELDS
   bitcoin_merged_mining_coinbase_transaction?: string | null;
   bitcoin_merged_mining_header?: string | null;
@@ -55,7 +57,7 @@ export interface Block {
   blob_gas_used?: string;
   burnt_blob_fees?: string;
   excess_blob_gas?: string;
-  blob_transaction_count?: number;
+  blob_transactions_count?: number;
   // ZKSYNC FIELDS
   zksync?: Omit<ZkSyncBatchesItem, 'number' | 'transactions_count' | 'timestamp'> & {
     batch_number: number | null;

@@ -17,8 +17,6 @@ import { toaster } from 'toolkit/chakra/toaster';
 import { Tooltip } from 'toolkit/chakra/tooltip';
 import IconSvg from 'ui/shared/IconSvg';
 
-const feature = config.features.web3Wallet;
-
 function getRequestParams(token: TokenInfo, tokenId?: string): WatchAssetParams | undefined {
   switch (token.type) {
     case 'ERC-20':
@@ -57,13 +55,16 @@ interface Props {
   isLoading?: boolean;
   variant?: 'icon' | 'button';
   iconSize?: number;
+  chainConfig?: typeof config;
 }
 
-const AddressAddToWallet = ({ className, token, tokenId, isLoading, variant = 'icon', iconSize = 6 }: Props) => {
-  const { provider, wallet } = useProvider();
-  const switchOrAddChain = useSwitchOrAddChain();
+const AddressAddToWallet = ({ className, token, tokenId, isLoading, variant = 'icon', iconSize = 6, chainConfig }: Props) => {
+  const { data: { wallet, provider } = {} } = useProvider();
+  const switchOrAddChain = useSwitchOrAddChain({ chainConfig });
   const isMobile = useIsMobile();
   const { trackUsage } = useRewardsActivity();
+
+  const feature = (chainConfig ?? config).features.web3Wallet;
 
   const handleClick = React.useCallback(async() => {
     if (!wallet) {
@@ -134,7 +135,7 @@ const AddressAddToWallet = ({ className, token, tokenId, isLoading, variant = 'i
         <IconButton
           className={ className }
           aria-label="Add token to wallet"
-          variant="plain"
+          variant="icon_background"
           size="md"
           onClick={ handleClick }
         >

@@ -11,16 +11,15 @@ import { route, routeParams } from 'nextjs/routes';
 import config from 'configs/app';
 import getBlockReward from 'lib/block/getBlockReward';
 import { useMultichainContext } from 'lib/contexts/multichain';
-import getNetworkValidationActionText from 'lib/networks/getNetworkValidationActionText';
 import getNetworkValidatorTitle from 'lib/networks/getNetworkValidatorTitle';
 import * as arbitrum from 'lib/rollups/arbitrum';
+import { formatZkSyncL2TxnBatchStatus, layerLabels } from 'lib/rollups/utils';
 import getQueryParamString from 'lib/router/getQueryParamString';
-import { currencyUnits } from 'lib/units';
 import { CollapsibleDetails } from 'toolkit/chakra/collapsible';
 import { Link } from 'toolkit/chakra/link';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { Tooltip } from 'toolkit/chakra/tooltip';
-import { GWEI, WEI, WEI_IN_GWEI, ZERO } from 'toolkit/utils/consts';
+import { ZERO } from 'toolkit/utils/consts';
 import { space } from 'toolkit/utils/htmlEntities';
 import OptimisticL2TxnBatchDA from 'ui/shared/batch/OptimisticL2TxnBatchDA';
 import BlockGasUsed from 'ui/shared/block/BlockGasUsed';
@@ -37,6 +36,9 @@ import PrevNext from 'ui/shared/PrevNext';
 import RawDataSnippet from 'ui/shared/RawDataSnippet';
 import StatusTag from 'ui/shared/statusTag/StatusTag';
 import Utilization from 'ui/shared/Utilization/Utilization';
+import GasPriceValue from 'ui/shared/value/GasPriceValue';
+import NativeCoinValue from 'ui/shared/value/NativeCoinValue';
+import { WEI } from 'ui/shared/value/utils';
 import VerificationSteps from 'ui/shared/verificationSteps/VerificationSteps';
 import ZkSyncL2TxnBatchHashesInfo from 'ui/txnBatches/zkSyncL2/ZkSyncL2TxnBatchHashesInfo';
 
@@ -44,6 +46,8 @@ import BlockDetailsBaseFeeCelo from './details/BlockDetailsBaseFeeCelo';
 import BlockDetailsBlobInfo from './details/BlockDetailsBlobInfo';
 import BlockDetailsZilliqaQuorumCertificate from './details/BlockDetailsZilliqaQuorumCertificate';
 import type { BlockQuery } from './useBlockQuery';
+
+const zkSyncVerificationSteps = ZKSYNC_L2_TX_BATCH_STATUSES.map(formatZkSyncL2TxnBatchStatus);
 
 interface Props {
   query: BlockQuery;
@@ -66,7 +70,7 @@ const BlockDetails = ({ query }: Props) => {
     const increment = direction === 'next' ? +1 : -1;
     const nextId = String(data.height + increment);
 
-    router.push(routeParams({ pathname: '/block/[height_or_hash]', query: { height_or_hash: nextId } }, multichainContext), undefined);
+    router.push(routeParams({ pathname: '/block/[height_or_hash]', query: { height_or_hash: nextId } }, { chain: multichainContext?.chain }));
   }, [ data, multichainContext, router ]);
 
   if (!data) {
@@ -111,8 +115,6 @@ const BlockDetails = ({ query }: Props) => {
     );
   })();
 
-  const verificationTitle = `${ capitalize(getNetworkValidationActionText()) } by`;
-
   const txsNum = (() => {
     const blockTxsNum = (
       <Link href={ route({ pathname: '/block/[height_or_hash]', query: { height_or_hash: heightOrHash, tab: 'txs' } }, multichainContext) }>
@@ -120,11 +122,11 @@ const BlockDetails = ({ query }: Props) => {
       </Link>
     );
 
-    const blockBlobTxsNum = (config.features.dataAvailability.isEnabled && data.blob_transaction_count) ? (
+    const blockBlobTxsNum = (config.features.dataAvailability.isEnabled && data.blob_transactions_count) ? (
       <>
         <span> including </span>
         <Link href={ route({ pathname: '/block/[height_or_hash]', query: { height_or_hash: heightOrHash, tab: 'blob_txs' } }, multichainContext) }>
-          { data.blob_transaction_count } blob txn{ data.blob_transaction_count === 1 ? '' : 's' }
+          { data.blob_transactions_count } blob txn{ data.blob_transactions_count === 1 ? '' : 's' }
         </Link>
       </>
     ) : null;
@@ -175,10 +177,10 @@ const BlockDetails = ({ query }: Props) => {
       { rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' && data.arbitrum && (
         <>
           <DetailedInfo.ItemLabel
-            hint="The most recent L2 block height as of this L3 block"
+            hint={ `The most recent ${ layerLabels.parent } block height as of this ${ layerLabels.current } block` }
             isLoading={ isPlaceholderData }
           >
-            L2 block height
+            { layerLabels.parent } block height
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <BlockEntityL1 isLoading={ isPlaceholderData } number={ data.arbitrum.l1_block_number }/>
@@ -224,7 +226,7 @@ const BlockDetails = ({ query }: Props) => {
         </>
       ) }
 
-      { data.size && (
+      { typeof data.size === 'number' && (
         <>
           <DetailedInfo.ItemLabel
             hint="Size of the block in bytes"
@@ -306,8 +308,13 @@ const BlockDetails = ({ query }: Props) => {
             Status
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
-            { rollupFeature.type === 'zkSync' && data.zksync &&
-              <VerificationSteps steps={ ZKSYNC_L2_TX_BATCH_STATUSES } currentStep={ data.zksync.status } isLoading={ isPlaceholderData }/> }
+            { rollupFeature.type === 'zkSync' && data.zksync && (
+              <VerificationSteps
+                steps={ zkSyncVerificationSteps }
+                currentStep={ formatZkSyncL2TxnBatchStatus(data.zksync.status) }
+                isLoading={ isPlaceholderData }
+              />
+            ) }
             { rollupFeature.type === 'arbitrum' && data.arbitrum && (
               <VerificationSteps
                 steps={ arbitrum.verificationSteps }
@@ -326,7 +333,7 @@ const BlockDetails = ({ query }: Props) => {
             hint="A block producer who successfully included the block onto the blockchain"
             isLoading={ isPlaceholderData }
           >
-            { verificationTitle }
+            { capitalize(validatorTitle) }
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
             <AddressEntity
@@ -345,7 +352,7 @@ const BlockDetails = ({ query }: Props) => {
           { data.arbitrum?.commitment_transaction.hash && (
             <>
               <DetailedInfo.ItemLabel
-                hint="L2 transaction containing this batch commitment"
+                hint={ `${ layerLabels.parent } transaction containing this batch commitment` }
                 isLoading={ isPlaceholderData }
               >
                 Commitment tx
@@ -359,7 +366,7 @@ const BlockDetails = ({ query }: Props) => {
           { data.arbitrum?.confirmation_transaction.hash && (
             <>
               <DetailedInfo.ItemLabel
-                hint="L2 transaction containing confirmation of this batch"
+                hint={ `${ layerLabels.parent } transaction containing confirmation of this batch` }
                 isLoading={ isPlaceholderData }
               >
                 Confirmation tx
@@ -385,9 +392,7 @@ const BlockDetails = ({ query }: Props) => {
             Block reward
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue columnGap={ 1 } multiRow>
-            <Skeleton loading={ isPlaceholderData }>
-              { totalReward.dividedBy(WEI).toFixed() } { currencyUnits.ether }
-            </Skeleton>
+            <NativeCoinValue amount={ totalReward.toString() } accuracy={ 0 } loading={ isPlaceholderData }/>
             { rewardBreakDown }
           </DetailedInfo.ItemValue>
         </>
@@ -403,7 +408,7 @@ const BlockDetails = ({ query }: Props) => {
               { type }
             </DetailedInfo.ItemLabel>
             <DetailedInfo.ItemValue>
-              { BigNumber(reward).dividedBy(WEI).toFixed() } { currencyUnits.ether }
+              <NativeCoinValue amount={ reward.toString() } accuracy={ 0 }/>
             </DetailedInfo.ItemValue>
           </React.Fragment>
         ))
@@ -469,9 +474,7 @@ const BlockDetails = ({ query }: Props) => {
             Minimum gas price
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
-            <Skeleton loading={ isPlaceholderData }>
-              { BigNumber(data.minimum_gas_price).dividedBy(GWEI).toFormat() } { currencyUnits.gwei }
-            </Skeleton>
+            <NativeCoinValue amount={ data.minimum_gas_price } units="gwei" loading={ isPlaceholderData }/>
           </DetailedInfo.ItemValue>
         </>
       ) }
@@ -484,17 +487,11 @@ const BlockDetails = ({ query }: Props) => {
           >
             Base fee per gas
           </DetailedInfo.ItemLabel>
-          <DetailedInfo.ItemValue>
-            { isPlaceholderData ? (
-              <Skeleton loading={ isPlaceholderData } h="20px" maxW="380px" w="100%"/>
-            ) : (
-              <>
-                <Text>{ BigNumber(data.base_fee_per_gas).dividedBy(WEI).toFixed() } { currencyUnits.ether } </Text>
-                <Text color="text.secondary" whiteSpace="pre">
-                  { space }({ BigNumber(data.base_fee_per_gas).dividedBy(WEI_IN_GWEI).toFixed() } { currencyUnits.gwei })
-                </Text>
-              </>
-            ) }
+          <DetailedInfo.ItemValue multiRow>
+            <GasPriceValue
+              amount={ data.base_fee_per_gas }
+              loading={ isPlaceholderData }
+            />
           </DetailedInfo.ItemValue>
         </>
       ) }
@@ -510,15 +507,17 @@ const BlockDetails = ({ query }: Props) => {
           >
             Burnt fees
           </DetailedInfo.ItemLabel>
-          <DetailedInfo.ItemValue>
-            <IconSvg name="flame" boxSize={ 5 } color="icon.primary" isLoading={ isPlaceholderData }/>
-            <Skeleton loading={ isPlaceholderData } ml={{ base: 1, lg: 2 }}>
-              { burntFees.dividedBy(WEI).toFixed() } { currencyUnits.ether }
-            </Skeleton>
+          <DetailedInfo.ItemValue multiRow>
+            <NativeCoinValue
+              amount={ burntFees.toString() }
+              accuracy={ 0 }
+              loading={ isPlaceholderData }
+              startElement={ <IconSvg name="flame" boxSize={ 5 } mr={{ base: 1, lg: 2 }} color="icon.primary" isLoading={ isPlaceholderData }/> }
+              mr={ 4 }
+            />
             { !txFees.isEqualTo(ZERO) && (
               <Tooltip content="Burnt fees / Txn fees * 100%">
                 <Utilization
-                  ml={ 4 }
                   value={ burntFees.dividedBy(txFees).toNumber() }
                   isLoading={ isPlaceholderData }
                 />
@@ -537,9 +536,7 @@ const BlockDetails = ({ query }: Props) => {
             Priority fee / Tip
           </DetailedInfo.ItemLabel>
           <DetailedInfo.ItemValue>
-            <Skeleton loading={ isPlaceholderData }>
-              { BigNumber(data.priority_fee).dividedBy(WEI).toFixed() } { currencyUnits.ether }
-            </Skeleton>
+            <NativeCoinValue amount={ data.priority_fee.toString() } accuracy={ 0 } loading={ isPlaceholderData }/>
           </DetailedInfo.ItemValue>
         </>
       ) }
@@ -695,7 +692,7 @@ const BlockDetails = ({ query }: Props) => {
         { rollupFeature.isEnabled && rollupFeature.type === 'arbitrum' && data.arbitrum && data.arbitrum.send_count && (
           <>
             <DetailedInfo.ItemLabel
-              hint="The cumulative number of L3 to L2 transactions as of this block"
+              hint={ `The cumulative number of ${ layerLabels.current } to ${ layerLabels.parent } transactions as of this block` }
               isLoading={ isPlaceholderData }
             >
               Send count
@@ -705,7 +702,7 @@ const BlockDetails = ({ query }: Props) => {
             </DetailedInfo.ItemValue>
 
             <DetailedInfo.ItemLabel
-              hint="The root of the Merkle accumulator representing all L3 to L2 transactions as of this block"
+              hint={ `The root of the Merkle accumulator representing all ${ layerLabels.current } to ${ layerLabels.parent } transactions as of this block` }
               isLoading={ isPlaceholderData }
             >
               Send root
@@ -715,7 +712,7 @@ const BlockDetails = ({ query }: Props) => {
             </DetailedInfo.ItemValue>
 
             <DetailedInfo.ItemLabel
-              hint="The number of delayed L2 to L3 messages read as of this block"
+              hint={ `The number of delayed ${ layerLabels.parent } to ${ layerLabels.current } messages read as of this block` }
               isLoading={ isPlaceholderData }
             >
               Delayed messages

@@ -11,20 +11,22 @@ import { Tag } from 'toolkit/chakra/tag';
 
 import EntityTagIcon from './EntityTagIcon';
 import EntityTagTooltip from './EntityTagTooltip';
-import { getTagLinkParams } from './utils';
+import { getTagName, getTagLinkParams } from './utils';
 
 interface Props extends HTMLChakraProps<'span'> {
   data: TEntityTag;
+  addressHash?: string;
   isLoading?: boolean;
   noLink?: boolean;
+  noColors?: boolean;
 }
 
-const EntityTag = ({ data, isLoading, noLink, ...rest }: Props) => {
+const EntityTag = ({ data, addressHash, isLoading, noLink, noColors, ...rest }: Props) => {
   const multichainContext = useMultichainContext();
 
   const linkParams = !noLink ? getTagLinkParams(data, multichainContext) : undefined;
   const hasLink = Boolean(linkParams);
-  const iconColor = data.meta?.textColor ?? 'icon.secondary';
+  const iconColor = (!noColors && data.meta?.textColor) || 'icon.secondary';
 
   const handleLinkClick = React.useCallback(() => {
     if (!linkParams?.href) {
@@ -47,7 +49,7 @@ const EntityTag = ({ data, isLoading, noLink, ...rest }: Props) => {
       return `@${ data.meta.warpcastHandle }`;
     }
 
-    return data.name;
+    return getTagName(data, addressHash);
   })();
 
   return (
@@ -61,9 +63,9 @@ const EntityTag = ({ data, isLoading, noLink, ...rest }: Props) => {
         { ...rest }
       >
         <Tag
-          bg={ data.meta?.bgColor }
-          color={ data.meta?.textColor }
-          startElement={ <EntityTagIcon data={ data }/> }
+          bg={ !noColors ? data.meta?.bgColor : undefined }
+          color={ !noColors ? data.meta?.textColor : undefined }
+          startElement={ <EntityTagIcon data={ data } noColors={ noColors }/> }
           truncated
           endElement={ linkParams?.type === 'external' ? <LinkExternalIcon color={ iconColor }/> : null }
           endElementProps={ linkParams?.type === 'external' ? { ml: -1 } : undefined }

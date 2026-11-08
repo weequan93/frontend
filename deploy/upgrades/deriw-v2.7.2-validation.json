@@ -1,0 +1,100 @@
+{
+  "status": "source_candidate_validated",
+  "checked_at_utc": "2026-11-06T17:16:44.601532+00:00",
+  "release": "2.7.2-deriw.1",
+  "candidate_branch": "upgrade/frontend-v2.7.2",
+  "source": {
+    "deriw_parent": "25ccfdbb744365d9005e0e7b7adb16c171a4f7fd",
+    "upstream_parent": "446c409eeb54274aab90ff371a705f9699cd84ef",
+    "fork_base": "bed90dbd672dfd02caac01a1d4816128a393b466",
+    "reconciled_custom_commits": 12,
+    "target_backend": "10.2.6",
+    "license_unchanged_from_upstream": true,
+    "license_sha256": "c53a65c2fd561c87eaabf1072ef5dcab8653042bc15308465f52413585eb6271"
+  },
+  "runtime": {
+    "node": "22.23.4",
+    "yarn": "1.22.22",
+    "next": "16.2.10",
+    "react": "19.1.4",
+    "platform": "darwin-arm64"
+  },
+  "checks": {
+    "unit": {
+      "passed": 230,
+      "files": 28,
+      "command": "yarn test:vitest run"
+    },
+    "final_compatibility_rerun": {
+      "passed": 3
+    },
+    "browser": {
+      "desktop_passed": 9,
+      "iphone_webkit_passed": 2,
+      "network": "local mocks only"
+    },
+    "production_build": {
+      "passed": true,
+      "typescript_passed": true,
+      "standalone_server_generated": true,
+      "command": "yarn build"
+    },
+    "production_health": {
+      "http_status": 200,
+      "response": "ok",
+      "endpoint": "/node-api/healthz",
+      "temporary_server_stopped": true
+    },
+    "eslint": {
+      "errors": 0,
+      "existing_skipped_test_warnings": 7
+    },
+    "spellcheck": {
+      "issues": 0
+    },
+    "environment_validator": {
+      "fixtures_passed": 16,
+      "includes_deriw": true
+    },
+    "license_check": {
+      "passed": true
+    },
+    "frozen_lockfile_install": {
+      "passed": true
+    },
+    "yarn_integrity": {
+      "passed": true
+    },
+    "production_browser_source_maps": {
+      "count": 0
+    }
+  },
+  "coverage": [
+    "Separate Deriw account and trade API routing; backend v10 deposit endpoint routing",
+    "Account value from Deriw API plus token RPC using decimal arithmetic",
+    "No custom queries without configured integration; HTTP 500/503 retries and polling stop",
+    "Trade expansion and collapse; null or missing trade payloads",
+    "Parent L2 and current L3 deposit labels, feature title and analytics labels",
+    "Short date presets and bounded custom date ranges"
+  ],
+  "limitations": [
+    "Docker image not built or published; no deployment or live Compose changes",
+    "Browser checks use mocked services; live wallet and private environment validation remain for rollout",
+    "Optional MetaMask SDK warning: @react-native-async-storage/async-storage is unresolved",
+    "An initial install with ignored lifecycle scripts required restoring the locked node-datachannel native prebuild before the final production build",
+    "Frontend rollout requires the same native normalization job to be paused, checked and rebound to the changed runtime"
+  ],
+  "local_log_sha256": {
+    "unit": "de38f05edcf2e123f05f8ead5b98ed9884e1599cb32aaa777aedc4dd162b45d0",
+    "compatibility_rerun": "b29ddf273008f9621f99aeae7517c8bab26b2bf93cdd81b20661a0c6389d8c04",
+    "browser": "fd9d6f262f1e92414ca0fbf1dd06d6883a493b65e8ecd0af011bf07ad7f14737",
+    "production_build": "1409a2de25bb23d53d0c2b6272a5a870a634f5a2e1a1ab553963ac542e59eaf9",
+    "eslint": "48cd129f0a5f9fef3fe7670e5f39480cddf223c3600f31b53ce3ea4fe4d45bd8",
+    "spellcheck": "81d234731a987c0a407c97fd52f3295aed63672359b500131bb2961937a570a6",
+    "environment_validator": "d34316c8cb448bd3471b7b405596621cf7cd8041d45dcb23e5a5428761a37bc2",
+    "license_check": "76d2f48699ad6cb05f9a48c737d474c7f45ceeb1cf99adb5b831c9209d9be8a7",
+    "frozen_install": "46e53d4ad0c340d0450d9f02da2ff9dd4160a1edbc2387eda1c2a9fd00f95deb",
+    "yarn_integrity": "28441d12f2b7237a4698e817026bf20d11fbb70d32441bfafdbb4811d038a25b",
+    "production_health": "80449ff52a3b12e3f6f44f89ce266f23a957f615e95ac82caf282c23b16670bf"
+  }
+}

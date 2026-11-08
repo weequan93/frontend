@@ -1,6 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/experimental-ct-react';
 import { devices, defineConfig } from '@playwright/experimental-ct-react';
 import react from '@vitejs/plugin-react';
+import type { Plugin } from 'esbuild';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -34,7 +35,13 @@ const config: PlaywrightTestConfig = defineConfig({
   workers: 1,
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: process.env.CI ? 'blob' : 'html',
+
+  expect: {
+    toHaveScreenshot: {
+      threshold: 0.05,
+    },
+  },
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -55,12 +62,27 @@ const config: PlaywrightTestConfig = defineConfig({
         svgr({
           exportAsDefault: true,
         }),
-      ],
+      ] as unknown as Array<Plugin>,
       build: {
         // it actually frees some memory that vite needs a lot
         // https://github.com/storybookjs/builder-vite/issues/409#issuecomment-1152848986
         sourcemap: false,
         minify: false,
+        rollupOptions: {
+          output: {
+            // Ensure __envs exists in every chunk so code (e.g. next/router, configs/app) that
+            // runs before index.ts/envs.js doesn't throw. Real envs are set when envs.js runs.
+            //
+            // Explanation:
+            // With await import(...) in useAccount/useWallet, Vite turns those into separate chunks.
+            // In Playwright CT, the component’s chunk (and its dependency graph, including useAccount → config → getEnvValue → __envs)
+            // can load and run before the main entry that runs envs.js.
+            // So when that chunk runs, window.__envs isn’t set yet and you get ReferenceError: __envs is not defined.
+            //
+            // https://rollupjs.org/configuration-options/#output-banner-output-footer
+            banner: '(function(){if(typeof window!==\'undefined\')window.__envs=window.__envs||{};})();',
+          },
+        },
       },
       resolve: {
         alias: [
@@ -88,6 +110,15 @@ const config: PlaywrightTestConfig = defineConfig({
 
           { find: '/playwright/index.ts', replacement: './playwright/index.ts' },
           { find: '/playwright/envs.js', replacement: './playwright/envs.js' },
+
+          // Fix for @libp2p/utils missing merge-options export
+          { find: '@libp2p/utils/merge-options', replacement: 'merge-options' },
+
+          // Mock for @helia/verified-fetch to avoid build issues in tests
+          { find: '@helia/verified-fetch', replacement: './playwright/mocks/modules/@helia/verified-fetch.js' },
+
+          // Mock for @specify-sh/sdk to avoid build issues in tests
+          { find: '@specify-sh/sdk', replacement: './playwright/mocks/modules/@specify-sh/sdk.js' },
         ],
       },
       define: {

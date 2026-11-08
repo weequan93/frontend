@@ -6,7 +6,7 @@ import { useUpdateEffect } from '../hooks/useUpdateEffect';
 import type { LinkProps } from './link';
 import { Link } from './link';
 
-interface CollapsibleDetailsProps extends LinkProps {
+export interface CollapsibleDetailsProps extends LinkProps {
   children: React.ReactNode;
   id?: string;
   isExpanded?: boolean;
@@ -65,18 +65,26 @@ interface CollapsibleListProps<T> extends FlexProps {
   renderItem: (item: T, index: number) => React.ReactNode;
   triggerProps?: LinkProps;
   cutLength?: number;
+  text?: [React.ReactNode, React.ReactNode];
+  defaultExpanded?: boolean;
 }
 
 export const CollapsibleList = <T,>(props: CollapsibleListProps<T>) => {
   const CUT_LENGTH = 3;
 
-  const { items, renderItem, triggerProps, cutLength = CUT_LENGTH, ...rest } = props;
+  const { items, renderItem, triggerProps, cutLength = CUT_LENGTH, text: textProp, defaultExpanded = false, ...rest } = props;
 
-  const [ isExpanded, setIsExpanded ] = React.useState(false);
+  const [ isExpanded, setIsExpanded ] = React.useState(defaultExpanded);
+
+  React.useEffect(() => {
+    setIsExpanded(defaultExpanded);
+  }, [ defaultExpanded ]);
 
   const handleToggle = React.useCallback(() => {
     setIsExpanded((flag) => !flag);
   }, []);
+
+  const text = isExpanded ? (textProp?.[1] ?? 'Hide') : (textProp?.[0] ?? 'Show all');
 
   return (
     <Flex flexDir="column" w="100%" { ...rest }>
@@ -91,7 +99,7 @@ export const CollapsibleList = <T,>(props: CollapsibleListProps<T>) => {
           onClick={ handleToggle }
           { ...triggerProps }
         >
-          { isExpanded ? 'Hide' : 'Show all' }
+          { text }
         </Link>
       ) }
     </Flex>

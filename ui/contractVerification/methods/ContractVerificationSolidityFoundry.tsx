@@ -14,11 +14,13 @@ import ContractVerificationMethod from '../ContractVerificationMethod';
 const ContractVerificationSolidityFoundry = () => {
   const { watch } = useFormContext<FormFields>();
   const address = watch('address');
+  const generalApiEndpoint = config.apis.general ?
+    `${ config.apis.general.endpoint }${ config.apis.general.basePath ?? '' }` : '';
 
   const codeSnippet = `forge verify-contract \\
-  --rpc-url ${ config.chain.rpcUrls[0] || `${ config.apis.general.endpoint }/api/eth-rpc` } \\
+  --rpc-url ${ config.chain.rpcUrls[0] || (generalApiEndpoint ? `${ generalApiEndpoint }/api/eth-rpc` : '') } \\
   --verifier blockscout \\
-  --verifier-url '${ config.apis.general.endpoint }/api/' \\
+  --verifier-url '${ generalApiEndpoint ? `${ generalApiEndpoint }/api/` : '' }' \\
   ${ address || '<address>' } \\
   [contractFile]:[contractName]`;
 
@@ -30,7 +32,7 @@ const ContractVerificationSolidityFoundry = () => {
         </Flex>
         <Box whiteSpace="pre-wrap">
           <span>Full tutorial about contract verification via Foundry on Blockscout is available </span>
-          <Link href="https://docs.blockscout.com/for-users/verifying-a-smart-contract/foundry-verification" external>
+          <Link href="https://docs.blockscout.com/devs/verification/foundry-verification" external>
             here
           </Link>
         </Box>

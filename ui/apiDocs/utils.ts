@@ -3,8 +3,6 @@ import type { SwaggerRequest } from './types';
 import config from 'configs/app';
 import type { ApiPropsBase } from 'configs/app/apis';
 
-const feature = config.features.apiDocs;
-
 const microserviceRequestInterceptorFactory = (api: ApiPropsBase) => (req: SwaggerRequest) => {
   try {
     const url = new URL(req.url);
@@ -19,24 +17,45 @@ const microserviceRequestInterceptorFactory = (api: ApiPropsBase) => (req: Swagg
 const getMicroserviceSwaggerUrl = (api: ApiPropsBase) => `${ api.endpoint }${ api.basePath ?? '' }/api/v1/docs/swagger.yaml`;
 
 export const REST_API_SECTIONS = [
-  feature.isEnabled && {
+  config.apis.general && {
     id: 'blockscout-core-api',
     title: 'Blockscout core API',
     swagger: {
-      url: feature.coreApiSwaggerUrl,
+      // default swagger URL, will be replaced with an URL constructed from the backend version and the openapi spec folder name
+      url: 'https://raw.githubusercontent.com/blockscout/blockscout-api-v2-swagger/main/swagger.yaml',
       requestInterceptor: (req: SwaggerRequest) => {
-        const DEFAULT_SERVER = 'blockscout.com/poa/core';
+        if (!config.apis.general) {
+          return req;
+        }
 
         if (!req.loadSpec) {
-          const newUrl = new URL(req.url.replace(DEFAULT_SERVER, config.apis.general.host));
+          const newUrl = (() => {
+            try {
+              const DEFAULT_SERVER = 'blockscout.com/poa/core';
+              const DEFAULT_SERVER_NEW = 'http://localhost/api';
 
-          newUrl.protocol = config.apis.general.protocol + ':';
+              if (req.url.includes(DEFAULT_SERVER)) {
+                const url = new URL(req.url.replace(DEFAULT_SERVER, config.apis.general.host));
 
-          if (config.apis.general.port) {
-            newUrl.port = config.apis.general.port;
+                url.protocol = config.apis.general.protocol + ':';
+
+                if (config.apis.general.port) {
+                  url.port = config.apis.general.port;
+                }
+                return url;
+              }
+
+              if (req.url.includes(DEFAULT_SERVER_NEW)) {
+                return new URL(req.url.replace(DEFAULT_SERVER_NEW, `${ config.apis.general.endpoint }${ config.apis.general.basePath }/api`));
+              }
+
+            } catch (error) {}
+          })();
+
+          if (newUrl) {
+            req.url = newUrl.toString();
           }
 
-          req.url = newUrl.toString();
         }
         return req;
       },
@@ -72,6 +91,22 @@ export const REST_API_SECTIONS = [
     swagger: {
       url: getMicroserviceSwaggerUrl(config.apis.tac),
       requestInterceptor: microserviceRequestInterceptorFactory(config.apis.tac),
+    },
+  },
+  config.apis.zetachain && {
+    id: 'zetachain-api',
+    title: 'Zetachain CCTX API',
+    swagger: {
+      url: getMicroserviceSwaggerUrl(config.apis.zetachain),
+      requestInterceptor: microserviceRequestInterceptorFactory(config.apis.zetachain),
+    },
+  },
+  config.apis.interchainIndexer && {
+    id: 'interchain-indexer-api',
+    title: 'Interchain indexer API',
+    swagger: {
+      url: getMicroserviceSwaggerUrl(config.apis.interchainIndexer),
+      requestInterceptor: microserviceRequestInterceptorFactory(config.apis.interchainIndexer),
     },
   },
 ].filter(Boolean);

@@ -1,6 +1,5 @@
-import { GridItem, Text } from '@chakra-ui/react';
+import { GridItem } from '@chakra-ui/react';
 import type { UseQueryResult } from '@tanstack/react-query';
-import BigNumber from 'bignumber.js';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -8,23 +7,27 @@ import { ZKSYNC_L2_TX_BATCH_STATUSES, type ZkSyncBatch } from 'types/api/zkSyncL
 
 import { route } from 'nextjs-routes';
 
+import config from 'configs/app';
 import type { ResourceError } from 'lib/api/resources';
 import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
+import { formatZkSyncL2TxnBatchStatus, layerLabels } from 'lib/rollups/utils';
 import { currencyUnits } from 'lib/units';
 import { CollapsibleDetails } from 'toolkit/chakra/collapsible';
 import { Link } from 'toolkit/chakra/link';
 import { Skeleton } from 'toolkit/chakra/skeleton';
-import { WEI, WEI_IN_GWEI } from 'toolkit/utils/consts';
+import { TruncatedText } from 'toolkit/components/truncation/TruncatedText';
 import isCustomAppError from 'ui/shared/AppError/isCustomAppError';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import DataFetchAlert from 'ui/shared/DataFetchAlert';
 import * as DetailedInfo from 'ui/shared/DetailedInfo/DetailedInfo';
 import DetailedInfoTimestamp from 'ui/shared/DetailedInfo/DetailedInfoTimestamp';
 import PrevNext from 'ui/shared/PrevNext';
-import TruncatedValue from 'ui/shared/TruncatedValue';
+import GasPriceValue from 'ui/shared/value/GasPriceValue';
 import VerificationSteps from 'ui/shared/verificationSteps/VerificationSteps';
 
 import ZkSyncL2TxnBatchHashesInfo from './ZkSyncL2TxnBatchHashesInfo';
+
+const rollupFeature = config.features.rollup;
 
 interface Props {
   query: UseQueryResult<ZkSyncBatch, ResourceError>;
@@ -59,13 +62,14 @@ const ZkSyncL2TxnBatchDetails = ({ query }: Props) => {
   }
 
   const txNum = data.l2_transactions_count + data.l1_transactions_count;
+  const parentChainCurrency = rollupFeature.isEnabled ? rollupFeature.parentChain.currency?.symbol : undefined;
 
   return (
     <DetailedInfo.Container
       templateColumns={{ base: 'minmax(0, 1fr)', lg: 'minmax(min-content, 200px) minmax(0, 1fr)' }}
     >
       <DetailedInfo.ItemLabel
-        hint="Batch number indicates the length of batches produced by grouping L3 blocks to be proven on Ethereum."
+        hint={ `Batch number indicates the length of batches produced by grouping ${ layerLabels.current } blocks to be proven on ${ layerLabels.parent }.` }
         isLoading={ isPlaceholderData }
       >
         Txn batch number
@@ -91,7 +95,11 @@ const ZkSyncL2TxnBatchDetails = ({ query }: Props) => {
         Status
       </DetailedInfo.ItemLabel>
       <DetailedInfo.ItemValue>
-        <VerificationSteps steps={ ZKSYNC_L2_TX_BATCH_STATUSES.slice(1) } currentStep={ data.status } isLoading={ isPlaceholderData }/>
+        <VerificationSteps
+          steps={ ZKSYNC_L2_TX_BATCH_STATUSES.slice(1).map(formatZkSyncL2TxnBatchStatus) }
+          currentStep={ formatZkSyncL2TxnBatchStatus(data.status) }
+          isLoading={ isPlaceholderData }
+        />
       </DetailedInfo.ItemValue>
 
       <DetailedInfo.ItemLabel
@@ -126,7 +134,7 @@ const ZkSyncL2TxnBatchDetails = ({ query }: Props) => {
         <GridItem colSpan={{ base: undefined, lg: 2 }} mt={{ base: 1, lg: 4 }}/>
 
         <DetailedInfo.ItemLabel
-          hint="L2 batch root is a hash that summarizes batch data and submitted to the L2"
+          hint={ `${ layerLabels.parent } batch root is a hash that summarizes batch data and submitted to ${ layerLabels.parent }` }
         >
           Root hash
         </DetailedInfo.ItemLabel>
@@ -134,28 +142,33 @@ const ZkSyncL2TxnBatchDetails = ({ query }: Props) => {
           flexWrap="nowrap"
           alignSelf="flex-start"
         >
-          <TruncatedValue value={ data.root_hash }/>
+          <TruncatedText text={ data.root_hash }/>
           <CopyToClipboard text={ data.root_hash }/>
         </DetailedInfo.ItemValue>
 
         <DetailedInfo.ItemLabel
-          hint="Gas price for the batch settlement transaction on L2"
+          hint={ `Gas price for the batch settlement transaction on ${ layerLabels.parent }` }
         >
-          L2 gas price
+          { layerLabels.parent } gas price
         </DetailedInfo.ItemLabel>
         <DetailedInfo.ItemValue multiRow>
-          <Text mr={ 1 }>{ BigNumber(data.l1_gas_price).dividedBy(WEI).toFixed() } { currencyUnits.ether }</Text>
-          <Text color="text.secondary">({ BigNumber(data.l1_gas_price).dividedBy(WEI_IN_GWEI).toFixed() } { currencyUnits.gwei })</Text>
+          <GasPriceValue
+            amount={ data.l1_gas_price }
+            loading={ isPlaceholderData }
+            asset={ parentChainCurrency || currencyUnits.ether }
+          />
         </DetailedInfo.ItemValue>
 
         <DetailedInfo.ItemLabel
           hint='The gas price below which the "baseFee" of the batch should not fall'
         >
-          L3 fair gas price
+          { layerLabels.current } fair gas price
         </DetailedInfo.ItemLabel>
         <DetailedInfo.ItemValue multiRow>
-          <Text mr={ 1 }>{ BigNumber(data.l2_fair_gas_price).dividedBy(WEI).toFixed() } { currencyUnits.ether }</Text>
-          <Text color="text.secondary">({ BigNumber(data.l2_fair_gas_price).dividedBy(WEI_IN_GWEI).toFixed() } { currencyUnits.gwei })</Text>
+          <GasPriceValue
+            amount={ data.l2_fair_gas_price }
+            loading={ isPlaceholderData }
+          />
         </DetailedInfo.ItemValue>
       </CollapsibleDetails>
     </DetailedInfo.Container>

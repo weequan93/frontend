@@ -6,7 +6,7 @@ import type { TokenInstance } from 'types/api/token';
 import { Alert } from 'toolkit/chakra/alert';
 import type { SelectOption } from 'toolkit/chakra/select';
 import { Select } from 'toolkit/chakra/select';
-import ContentLoader from 'ui/shared/ContentLoader';
+import { ContentLoader } from 'toolkit/components/loaders/ContentLoader';
 import CopyToClipboard from 'ui/shared/CopyToClipboard';
 import RawDataSnippet from 'ui/shared/RawDataSnippet';
 
@@ -51,7 +51,7 @@ const TokenInstanceMetadata = ({ data, isPlaceholderData }: Props) => {
   return (
     <Box>
       { refetchStatus === 'ERROR' && (
-        <Alert status="warning" mb={ 6 } title="Ooops!" display={{ base: 'block', lg: 'flex' }}>
+        <Alert status="warning" mb={ 6 } title="Oops!" display={{ base: 'block', lg: 'flex' }}>
           <span>We { `couldn't` } refresh metadata. Please try again now or later.</span>
         </Alert>
       ) }

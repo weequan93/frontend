@@ -31,7 +31,11 @@ const TokenNftMarketplaces = ({ hash, id, isLoading, appActionData, source }: Pr
       if (!hrefTemplate) {
         return null;
       }
-      const href = hrefTemplate.replace('{id}', id || '').replace('{hash}', hash || '');
+      const href = hrefTemplate
+        .replace('{id}', id || '')
+        .replace('{id_lowercase}', id?.toLowerCase() || '')
+        .replace('{hash}', hash || '')
+        .replace('{hash_lowercase}', hash?.toLowerCase() || '');
 
       return {
         href,
@@ -61,7 +65,7 @@ const TokenNftMarketplaces = ({ hash, id, isLoading, appActionData, source }: Pr
             { items.map((item) => {
               return (
                 <Tooltip content={ `View on ${ item.name }` } key={ item.name }>
-                  <Link href={ item.href } target="_blank">
+                  <Link href={ item.href } external noIcon>
                     <Image
                       src={ item.logo_url }
                       alt={ `${ item.name } marketplace logo` }

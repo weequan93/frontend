@@ -4,10 +4,11 @@ import React from 'react';
 
 import type { AdvancedFilterParams, AdvancedFilterType } from 'types/api/advancedFilter';
 
+import { useMultichainContext } from 'lib/contexts/multichain';
 import { Checkbox, CheckboxGroup } from 'toolkit/chakra/checkbox';
 import TableColumnFilter from 'ui/shared/filters/TableColumnFilter';
 
-import { ADVANCED_FILTER_TYPES_WITH_ALL } from '../constants';
+import { getAdvancedFilterTypes } from '../constants';
 
 const RESET_VALUE = 'all';
 
@@ -20,6 +21,8 @@ type Props = {
 
 const TypeFilter = ({ value = [ RESET_VALUE ], handleFilterChange }: Props) => {
   const [ currentValue, setCurrentValue ] = React.useState<Array<AdvancedFilterType | typeof RESET_VALUE>>([ ...value ]);
+
+  const multichainContext = useMultichainContext();
 
   const handleChange = React.useCallback((value: Array<string>) => {
     setCurrentValue((prev) => {
@@ -43,9 +46,13 @@ const TypeFilter = ({ value = [ RESET_VALUE ], handleFilterChange }: Props) => {
     handleFilterChange(FILTER_PARAM, value);
   }, [ handleFilterChange, currentValue ]);
 
+  const advancedFilterTypes = React.useMemo(() => {
+    return getAdvancedFilterTypes(multichainContext?.chain?.app_config, true);
+  }, [ multichainContext?.chain?.app_config ]);
+
   return (
     <TableColumnFilter
-      title="Type of transfer"
+      title="Transaction type"
       isFilled={ !(currentValue.length === 1 && currentValue[0] === RESET_VALUE) }
       isTouched={ !isEqual(currentValue.sort(), value.sort()) }
       onFilter={ onFilter }
@@ -54,7 +61,7 @@ const TypeFilter = ({ value = [ RESET_VALUE ], handleFilterChange }: Props) => {
     >
       <Flex display="flex" flexDir="column" rowGap={ 3 }>
         <CheckboxGroup value={ currentValue } onValueChange={ handleChange } orientation="vertical">
-          { ADVANCED_FILTER_TYPES_WITH_ALL.map(type => (
+          { advancedFilterTypes.map(type => (
             <Checkbox
               key={ type.id }
               value={ type.id }

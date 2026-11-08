@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "image_id": "sha256:dd4bc22416bffde578b6885d39d766fd41ba545642c46b23903c34609ba3355d",
+  "image_reference": "quanquanah/blockscout-frontend:deriw-v2.7.2-27a4139d09ac",
+  "source_revision": "27a4139d09ac57d975cc8c2bd4f1d804c8589f20",
+  "platform": "linux/amd64",
+  "versions": {
+    "node": "v22.23.4",
+    "version": "2.7.2-deriw.1",
+    "next": "16.2.10",
+    "react": "19.1.4"
+  },
+  "full_entrypoint_health_passed": true,
+  "strict_invalid_token_rejected": true,
+  "invalid_token_exit_code": 1,
+  "native_dependency_import_passed": true,
+  "generated_parent_current_labels": "L2/L3",
+  "browser_source_map_count": 0,
+  "staging_memory_limit_bytes": 1073741824,
+  "containers_removed": true,
+  "live_server_changed": false,
+  "network_scope": "Synthetic API origins; no dev explorer database or API requests",
+  "checked_at_utc": "2026-11-07T03:30:22.673490+00:00",
+  "registry": {
+    "repository": "quanquanah/blockscout-frontend",
+    "tag": "deriw-v2.7.2-27a4139d09ac",
+    "index_digest": "sha256:dd4bc22416bffde578b6885d39d766fd41ba545642c46b23903c34609ba3355d",
+    "platform": "linux/amd64",
+    "platform_manifest_digest": "sha256:76a170d12b74183e3df77dbfa4d047aa0937ad66ed43615ca0d278b4c67429a9",
+    "config_digest": "sha256:c44200bf03d0b5ad6c66dac0992b8737ec2ab75bb8ce3e502bfe1b5d80e81788",
+    "deployment_reference": "quanquanah/blockscout-frontend@sha256:76a170d12b74183e3df77dbfa4d047aa0937ad66ed43615ca0d278b4c67429a9",
+    "registry_verified": true,
+    "anonymous_pull_confirmed": true,
+    "digest_matches": true,
+    "canonical_reference_pull_passed": true,
+    "container_image_identity_matches": true
+  },
+  "build": {
+    "source_commit": "27a4139d09ac57d975cc8c2bd4f1d804c8589f20",
+    "node_heap_mib": 4096,
+    "next_workers": 2,
+    "webpack_build_worker": true,
+    "webpack_memory_optimizations": true,
+    "typescript_passed": true,
+    "production_build_passed": true
+  },
+  "limitations": [
+    "Container tests use synthetic settings and API origins. Actual server-private settings are checked by the deployment helper before activation.",
+    "No live dev-server deployment was executed in this image validation.",
+    "Optional MetaMask SDK build warning for @react-native-async-storage/async-storage remains; deployed wallet flows need browser validation."
+  ],
+  "log_sha256": {
+    "build": "661f98ca265cfd4c2e9a68ff8a738a7e084692d84bb724c5a313c0e31c29244f",
+    "container_qa": "25c1967cb7cc796ab351107e43c6d4528ec5ed2ee60e46e552e8ce49d890ebf7",
+    "registry_push": "613ee6b4c8ae685af51a7259e0c3e5b46b7a5a85467575de2ae4d1e485047ba2"
+  },
+  "synthetic_environment_migration_passed": true
+}

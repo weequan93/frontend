@@ -1,27 +1,29 @@
 import * as descriptors from './policies';
 import { makePolicyString, mergeDescriptors } from './utils';
 
-function generateCspPolicy() {
+function generateCspPolicy(isPrivateMode = false) {
   const policyDescriptor = mergeDescriptors(
-    descriptors.app(),
-    descriptors.ad(),
+    descriptors.app(isPrivateMode),
+    // Exclude tracking/analytics sources in private mode
+    isPrivateMode ? {} : descriptors.ad(),
+    isPrivateMode ? {} : descriptors.blockchainInteraction(),
     descriptors.cloudFlare(),
     descriptors.flashblocks(),
-    descriptors.gasHawk(),
-    descriptors.googleAnalytics(),
+    isPrivateMode ? {} : descriptors.googleAnalytics(),
     descriptors.googleFonts(),
     descriptors.googleReCaptcha(),
-    descriptors.growthBook(),
+    isPrivateMode ? {} : descriptors.growthBook(),
     descriptors.helia(),
-    descriptors.marketplace(),
-    descriptors.mixpanel(),
+    isPrivateMode ? {} : descriptors.marketplace(),
+    descriptors.megaEth(),
+    isPrivateMode ? {} : descriptors.mixpanel(),
     descriptors.monaco(),
     descriptors.multichain(),
-    descriptors.rollbar(),
+    isPrivateMode ? {} : descriptors.rollbar(),
     descriptors.rollup(),
     descriptors.safe(),
     descriptors.usernameApi(),
-    descriptors.walletConnect(),
+    descriptors.zetachain(),
   );
 
   return makePolicyString(policyDescriptor);

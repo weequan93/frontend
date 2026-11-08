@@ -9,14 +9,13 @@ import type {
   TxInterpretationVariable,
   TxInterpretationVariableString,
 } from 'types/api/txInterpretation';
-import type { ChainConfig } from 'types/multichain';
+import type { ClusterChainConfig } from 'types/multichain';
 
 import { route } from 'nextjs-routes';
 
 import config from 'configs/app';
 import dayjs from 'lib/date/dayjs';
 import * as mixpanel from 'lib/mixpanel/index';
-import getChainTooltipText from 'lib/multichain/getChainTooltipText';
 import { currencyUnits } from 'lib/units';
 import { Badge } from 'toolkit/chakra/badge';
 import { useColorModeValue } from 'toolkit/chakra/color-mode';
@@ -24,10 +23,12 @@ import { Image } from 'toolkit/chakra/image';
 import { Link } from 'toolkit/chakra/link';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { Tooltip } from 'toolkit/chakra/tooltip';
-import ChainIcon from 'ui/optimismSuperchain/components/ChainIcon';
+import { SECOND } from 'toolkit/utils/consts';
 import AddressEntity from 'ui/shared/entities/address/AddressEntity';
 import EnsEntity from 'ui/shared/entities/ens/EnsEntity';
 import TokenEntity from 'ui/shared/entities/token/TokenEntity';
+import ChainIcon from 'ui/shared/externalChains/ChainIcon';
+import getChainTooltipText from 'ui/shared/externalChains/getChainTooltipText';
 import IconSvg from 'ui/shared/IconSvg';
 
 import {
@@ -39,13 +40,15 @@ import {
   WEI_VAR_NAME,
 } from './utils';
 
+const nameServicesFeature = config.features.nameServices;
+
 interface Props extends BoxProps {
   summary?: TxInterpretationSummary;
   isLoading?: boolean;
   addressDataMap?: Record<string, AddressParam>;
   className?: string;
   isNoves?: boolean;
-  chainData?: ChainConfig;
+  chainData?: ClusterChainConfig;
 };
 
 type NonStringTxInterpretationVariable = Exclude<TxInterpretationVariable, TxInterpretationVariableString>;
@@ -101,7 +104,7 @@ const TxInterpretationElementByType = (
         </chakra.span>
       );
     case 'domain': {
-      if (config.features.nameService.isEnabled) {
+      if (nameServicesFeature.isEnabled && nameServicesFeature.ens.isEnabled) {
         return (
           <chakra.span display="inline-block" verticalAlign="top" _notFirst={{ marginLeft: 1 }}>
             <EnsEntity
@@ -131,7 +134,7 @@ const TxInterpretationElementByType = (
       return <chakra.span>{ numberString + ' ' }</chakra.span>;
     }
     case 'timestamp': {
-      return <chakra.span color="text.secondary" whiteSpace="pre">{ dayjs(Number(value) * 1000).format('MMM DD YYYY') }</chakra.span>;
+      return <chakra.span color="text.secondary" whiteSpace="pre">{ dayjs(Number(value) * SECOND).format('MMM DD YYYY') }</chakra.span>;
     }
     case 'external_link': {
       return <Link external href={ value.link }>{ value.name }</Link>;
@@ -172,11 +175,14 @@ const TxInterpretationElementByType = (
       })();
 
       return (
-        <chakra.span display="inline-flex" alignItems="center" verticalAlign="top" _notFirst={{ marginLeft: 1 }} gap={ 1 }>
+        <chakra.span display="inline-flex" alignItems="center" verticalAlign="top" _notFirst={{ marginLeft: 1 }} gap={ 1 } mr={ 2 }>
           { icon && <Image src={ icon } alt={ value.name } width={ 5 } height={ 5 }/> }
           { name }
         </chakra.span>
       );
+    }
+    case 'link': {
+      return <Link external href={ value.url }>{ value.name }</Link>;
     }
   }
 };
@@ -218,6 +224,7 @@ const TxInterpretation = ({ summary, isLoading, addressDataMap, className, chain
               borderStyle="solid"
               borderColor="bg.primary"
               backgroundColor="bg.primary"
+              noTooltip
             />
           ) }
         </Box>

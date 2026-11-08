@@ -9,6 +9,7 @@ import React from 'react';
 import { route } from 'nextjs-routes';
 
 import useIsMobile from 'lib/hooks/useIsMobile';
+import { layerLabels } from 'lib/rollups/utils';
 import { Link } from 'toolkit/chakra/link';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import BlockEntityL1 from 'ui/shared/entities/block/BlockEntityL1';
@@ -43,14 +44,12 @@ const LatestDepositsItem = ({ item, isLoading }: ItemProps) => {
     <BlockEntityL1
       number={ item.l1BlockNumber }
       isLoading={ isLoading }
-      textStyle="sm"
       fontWeight={ 700 }
     />
   ) : (
     <BlockEntityL1
       number="TBD"
       isLoading={ isLoading }
-      textStyle="sm"
       fontWeight={ 700 }
       noLink
     />
@@ -60,16 +59,16 @@ const LatestDepositsItem = ({ item, isLoading }: ItemProps) => {
     <TxEntityL1
       isLoading={ isLoading }
       hash={ item.l1TxHash }
-      textStyle="sm"
       truncation={ isMobile ? 'constant_long' : 'dynamic' }
+      noCopy
     />
   ) : (
     <TxEntityL1
       isLoading={ isLoading }
       hash="To be determined"
-      textStyle="sm"
       truncation="none"
       noLink
+      noCopy
     />
   );
 
@@ -77,7 +76,6 @@ const LatestDepositsItem = ({ item, isLoading }: ItemProps) => {
     <TxEntity
       isLoading={ isLoading }
       hash={ item.l2TxHash }
-      textStyle="sm"
       truncation={ isMobile ? 'constant_long' : 'dynamic' }
     />
   );
@@ -99,11 +97,11 @@ const LatestDepositsItem = ({ item, isLoading }: ItemProps) => {
           </Flex>
           <Grid gridTemplateColumns="56px auto">
             <Skeleton loading={ isLoading } my="5px" w="fit-content">
-            L2 txn
+              { layerLabels.parent } txn
             </Skeleton>
             { l1TxLink }
             <Skeleton loading={ isLoading } my="3px" w="fit-content">
-            L3 txn
+              { layerLabels.current } txn
             </Skeleton>
             { l2TxLink }
           </Grid>
@@ -115,7 +113,7 @@ const LatestDepositsItem = ({ item, isLoading }: ItemProps) => {
       <Grid width="100%" columnGap={ 4 } rowGap={ 2 } templateColumns="max-content max-content auto" w="100%">
         { l1BlockLink }
         <Skeleton loading={ isLoading } w="fit-content" h="fit-content" my="5px">
-        L2 txn
+          { layerLabels.parent } txn
         </Skeleton>
         { l1TxLink }
         { item.timestamp ? (
@@ -130,7 +128,7 @@ const LatestDepositsItem = ({ item, isLoading }: ItemProps) => {
           />
         ) : <GridItem/> }
         <Skeleton loading={ isLoading } w="fit-content" h="fit-content" my="2px">
-        L3 txn
+          { layerLabels.current } txn
         </Skeleton>
         { l2TxLink }
       </Grid>

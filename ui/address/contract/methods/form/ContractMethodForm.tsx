@@ -26,7 +26,7 @@ import { getFieldLabel, matchArray, transformFormDataToMethodArgs } from './util
 import type { ContractMethodFormFields } from './utils';
 
 // eslint-disable-next-line max-len
-const NO_WALLET_CLIENT_TEXT = 'Blockchain interaction is not available at the moment since WalletConnect is not configured for this application. Please contact the service maintainer to make necessary changes in the service configuration.';
+const NO_WALLET_CLIENT_TEXT = 'Blockchain interaction is not available at the moment since a wallet connector is not configured for this application. Please contact the service maintainer to make necessary changes in the service configuration.';
 
 interface Props {
   data: SmartContractMethod;
@@ -177,11 +177,6 @@ const ContractMethodForm = ({ data, attempt, onSubmit, onReset, isOpen }: Props)
       return null;
     }
 
-    const hasOutputs = 'outputs' in data && data.outputs.length > 0;
-    if (!hasOutputs) {
-      return null;
-    }
-
     const text = 'Simulate';
     const buttonCallStrategy = 'simulate';
 
@@ -295,7 +290,7 @@ const ContractMethodForm = ({ data, attempt, onSubmit, onReset, isOpen }: Props)
               return <ContractMethodFieldInput key={ index } { ...props } path={ `${ index }` }/>;
             }) }
           </Flex>
-          <Flex flexDir="row" gap={ 3 }>
+          <Flex flexDir="row" gap={ 3 } flexWrap="wrap">
             { secondaryButton }
             { primaryButton }
             { copyCallDataButton }
@@ -313,25 +308,29 @@ const ContractMethodForm = ({ data, attempt, onSubmit, onReset, isOpen }: Props)
           </Flex>
         </chakra.form>
       </FormProvider>
-      { result && result.source === 'wallet_client' && (
-        <ContractMethodResultWalletClient
-          data={ result.data }
-          onSettle={ handleResultSettle }
-        />
-      ) }
-      { result && result.source === 'public_client' && result.data instanceof Error && (
-        <ContractMethodResultPublicClient
-          data={ result.data }
-        />
-      ) }
-      { 'outputs' in data && data.outputs.length > 0 && (
-        <ContractMethodOutput
-          data={ showOutputResult ? result.data : undefined }
-          onSettle={ handleResultSettle }
-          abiItem={ data }
-          mode={ showOutputResult ? 'result' : 'preview' }
-        />
-      ) }
+      <Flex flexDir="column" rowGap={{ base: 1, lg: 2 }} mt={ 3 } _empty={{ display: 'none' }}>
+        { result && result.source === 'wallet_client' && (
+          <ContractMethodResultWalletClient
+            data={ result.data }
+            onSettle={ handleResultSettle }
+          />
+        ) }
+        { result && result.source === 'public_client' && (
+          <ContractMethodResultPublicClient
+            data={ result.data }
+            estimatedGas={ result.estimatedGas }
+            onSettle={ handleResultSettle }
+          />
+        ) }
+        { 'outputs' in data && data.outputs.length > 0 && (
+          <ContractMethodOutput
+            data={ showOutputResult ? result.data : undefined }
+            onSettle={ handleResultSettle }
+            abiItem={ data }
+            mode={ showOutputResult ? 'result' : 'preview' }
+          />
+        ) }
+      </Flex>
     </Box>
   );
 };

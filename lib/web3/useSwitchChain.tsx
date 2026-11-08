@@ -14,11 +14,15 @@ function getParams(chainConfig: typeof config): { chainId: string } {
   return { chainId: getHexadecimalChainId(Number(chainConfig.chain.id)) };
 }
 
-export default function useSwitchChain() {
-  const { wallet, provider } = useProvider();
+interface Params {
+  chainConfig?: typeof config;
+}
+
+export default function useSwitchChain(params?: Params) {
+  const { data: { wallet, provider } = {} } = useProvider();
   const multichainContext = useMultichainContext();
 
-  const chainConfig = multichainContext?.chain.config ?? config;
+  const chainConfig = params?.chainConfig || multichainContext?.chain.app_config || config;
 
   return React.useCallback(() => {
     if (!wallet || !provider) {

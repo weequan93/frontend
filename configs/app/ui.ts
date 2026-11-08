@@ -60,6 +60,7 @@ const UI = Object.freeze({
   featuredNetworks: {
     items: getExternalAssetFilePath('NEXT_PUBLIC_FEATURED_NETWORKS'),
     allLink: getEnvValue('NEXT_PUBLIC_FEATURED_NETWORKS_ALL_LINK'),
+    mode: (getEnvValue('NEXT_PUBLIC_FEATURED_NETWORKS_MODE') || 'list') as 'tabs' | 'list',
   },
   footer: {
     links: getExternalAssetFilePath('NEXT_PUBLIC_FOOTER_LINKS'),
@@ -70,11 +71,7 @@ const UI = Object.freeze({
     charts: parseEnvJson<Array<ChainIndicatorId>>(getEnvValue('NEXT_PUBLIC_HOMEPAGE_CHARTS')) || [],
     stats: homePageStats,
     heroBanner: parseEnvJson<HeroBannerConfig>(getEnvValue('NEXT_PUBLIC_HOMEPAGE_HERO_BANNER_CONFIG')),
-    // !!! DEPRECATED !!!
-    plate: {
-      background: getEnvValue('NEXT_PUBLIC_HOMEPAGE_PLATE_BACKGROUND'),
-      textColor: getEnvValue('NEXT_PUBLIC_HOMEPAGE_PLATE_TEXT_COLOR'),
-    },
+    highlights: getExternalAssetFilePath('NEXT_PUBLIC_HOMEPAGE_HIGHLIGHTS_CONFIG'),
   },
   views,
   indexingAlert: {
@@ -87,6 +84,9 @@ const UI = Object.freeze({
   },
   maintenanceAlert: {
     message: getEnvValue('NEXT_PUBLIC_MAINTENANCE_ALERT_MESSAGE'),
+  },
+  apiKeysAlert: {
+    message: getEnvValue('NEXT_PUBLIC_API_KEYS_ALERT_MESSAGE'),
   },
   explorers: {
     items: parseEnvJson<Array<NetworkExplorer>>(getEnvValue('NEXT_PUBLIC_NETWORK_EXPLORERS')) || [],
@@ -104,6 +104,9 @@ const UI = Object.freeze({
     body: parseEnvJson<FontFamily>(getEnvValue('NEXT_PUBLIC_FONT_FAMILY_BODY')),
   },
   maxContentWidth: getEnvValue('NEXT_PUBLIC_MAX_CONTENT_WIDTH_ENABLED') === 'false' ? false : true,
+  nativeCoinPrice: {
+    isHidden: getEnvValue('NEXT_PUBLIC_HIDE_NATIVE_COIN_PRICE') === 'true' ? true : false,
+  },
 });
 
 export default UI;

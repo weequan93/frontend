@@ -1,5 +1,7 @@
 import type { Abi, AbiType } from 'abitype';
 
+import type { AddressImplementation } from './addressParams';
+
 export type SmartContractMethodArgType = AbiType;
 export type SmartContractMethodStateMutability = 'view' | 'nonpayable' | 'payable';
 
@@ -22,21 +24,28 @@ export type SmartContractLicenseType =
 'bsl_1_1';
 
 export type SmartContractProxyType =
-  | 'eip1167'
-  | 'eip1967'
-  | 'eip1822'
-  | 'eip930'
-  | 'eip2535'
-  | 'eip7702'
-  | 'erc7760'
-  | 'master_copy'
-  | 'basic_implementation'
-  | 'basic_get_implementation'
-  | 'comptroller'
-  | 'clone_with_immutable_arguments'
-  | 'resolved_delegate_proxy'
-  | 'unknown'
-  | null;
+  'eip1167' |
+  'eip1967' |
+  'eip1967_oz' |
+  'eip1967_beacon' |
+  'eip1822' |
+  'eip930' |
+  'eip2535' |
+  'eip7702' |
+  'erc7760' |
+  'master_copy' |
+  'basic_implementation' |
+  'basic_get_implementation' |
+  'comptroller' |
+  'clone_with_immutable_arguments' |
+  'resolved_delegate_proxy' |
+  'unknown' |
+  null;
+
+export interface SmartContractConflictingImplementation {
+  proxy_type: NonNullable<SmartContractProxyType>;
+  implementations: Array<AddressImplementation>;
+}
 
 export interface SmartContract {
   deployed_bytecode: string | null;
@@ -53,6 +62,7 @@ export interface SmartContract {
   is_verified: boolean | null;
   is_verified_via_eth_bytecode_db: boolean | null;
   is_changed_bytecode: boolean | null;
+  conflicting_implementations: Array<SmartContractConflictingImplementation> | null;
 
   // sourcify info >>>
   is_verified_via_sourcify: boolean | null;
@@ -101,8 +111,8 @@ export interface SmartContractExternalLibrary {
 
 // VERIFICATION
 
-export type SmartContractVerificationMethodApi = 'flattened-code' | 'standard-input' | 'sourcify' | 'multi-part'
-| 'vyper-code' | 'vyper-multi-part' | 'vyper-standard-input' | 'stylus-github-repository';
+export type SmartContractVerificationMethodApi = 'flattened-code' | 'standard-input' | 'sourcify' | 'multi-part' |
+'vyper-code' | 'vyper-multi-part' | 'vyper-standard-input' | 'stylus-github-repository';
 
 export interface SmartContractVerificationConfigRaw {
   solidity_compiler_versions: Array<string>;

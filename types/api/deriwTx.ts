@@ -1,11 +1,3 @@
-
-export interface DeriwTxStates {
-  data: {
-    list: DeriwTxState[];
-  }
-  isPlaceholderData: boolean;
-}
-
 export interface DeriwTxState {
   coin_name: string;
   is_long: boolean;
@@ -13,3 +5,10 @@ export interface DeriwTxState {
   order_type: string;
 }
 
+export interface DeriwTxResponse {
+  data: { list: Array<DeriwTxState> };
+}
+
+export interface DeriwTxStates extends DeriwTxResponse {
+  isPlaceholderData: boolean;
+}

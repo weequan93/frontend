@@ -5,15 +5,19 @@ import useApiQuery from 'lib/api/useApiQuery';
 
 import useAccount from './useAccount';
 
+const feature = config.features.nameServices;
+
 export default function useAccountWithDomain(isEnabled: boolean) {
   const { address, isConnecting } = useAccount();
 
-  const isQueryEnabled = config.features.nameService.isEnabled && Boolean(address) && Boolean(isEnabled);
+  const isQueryEnabled = feature.isEnabled && feature.ens.isEnabled && Boolean(address) && Boolean(isEnabled);
 
   const domainQuery = useApiQuery('bens:address_domain', {
     pathParams: {
-      chainId: config.chain.id,
       address,
+    },
+    queryParams: {
+      protocols: feature.isEnabled && feature.ens.isEnabled ? feature.ens.protocols : undefined,
     },
     queryOptions: {
       enabled: isQueryEnabled,

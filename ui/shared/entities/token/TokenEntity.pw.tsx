@@ -1,8 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import React from 'react';
 
-import getIconUrl from 'lib/multichain/getIconUrl';
-import * as opSuperchainMock from 'mocks/multichain/opSuperchain';
+import * as chainDataMock from 'mocks/multichain/chains';
 import * as tokenMock from 'mocks/tokens/tokenInfo';
 import { stableHover } from 'playwright/helpers/stableHover';
 import { test, expect } from 'playwright/lib';
@@ -28,9 +27,9 @@ test.describe('variant', () => {
 
     test(`${ variant } with chain data`, async({ render, mockAssetResponse }) => {
       const LOGO_URL = 'https://example.com/logo.png';
-      const chainLogoUrl = getIconUrl(opSuperchainMock.chainDataA);
+      const chainLogoUrl = chainDataMock.chainA.logo;
       await mockAssetResponse(LOGO_URL, './playwright/mocks/image_s.jpg');
-      await mockAssetResponse(chainLogoUrl, './playwright/mocks/image_svg.svg');
+      await mockAssetResponse(chainLogoUrl as string, './playwright/mocks/image_svg.svg');
 
       const component = await render(
         <TokenEntity
@@ -40,8 +39,9 @@ test.describe('variant', () => {
             symbol: 'DUCK DUCK DUCK',
             address_hash: tokenMock.tokenInfo.address_hash,
             icon_url: LOGO_URL,
+            reputation: 'ok',
           }}
-          chain={ opSuperchainMock.chainDataA }
+          chain={ chainDataMock.chainA }
         />,
       );
 
@@ -51,15 +51,15 @@ test.describe('variant', () => {
 });
 
 test('icon in heading variant', async({ render, mockAssetResponse }) => {
-  const chainLogoUrl = getIconUrl(opSuperchainMock.chainDataA);
+  const chainLogoUrl = chainDataMock.chainA.logo;
   await mockAssetResponse(tokenMock.tokenInfo.icon_url as string, './playwright/mocks/image_s.jpg');
-  await mockAssetResponse(chainLogoUrl, './playwright/mocks/image_svg.svg');
+  await mockAssetResponse(chainLogoUrl as string, './playwright/mocks/image_svg.svg');
 
   const component = await render(
     <Icon
       token={ tokenMock.tokenInfo }
       variant="heading"
-      chain={ opSuperchainMock.chainDataA }
+      chain={ chainDataMock.chainA }
     />,
   );
 
@@ -83,6 +83,7 @@ test('with logo, long name and symbol', async({ page, render }) => {
         symbol: 'DUCK DUCK DUCK',
         address_hash: tokenMock.tokenInfo.address_hash,
         icon_url: LOGO_URL,
+        reputation: 'ok',
       }}
     />,
   );
@@ -91,6 +92,34 @@ test('with logo, long name and symbol', async({ page, render }) => {
   await expect(page).toHaveScreenshot();
 
   await stableHover(page.getByText(/duc/i));
+  await expect(page).toHaveScreenshot();
+});
+
+test('scam token', async({ page, render, mockEnvs }) => {
+  await mockEnvs([
+    [ 'NEXT_PUBLIC_VIEWS_TOKEN_SCAM_TOGGLE_ENABLED', 'true' ],
+  ]);
+
+  const LOGO_URL = 'https://example.com/logo.png';
+  await page.route(LOGO_URL, (route) => {
+    return route.fulfill({
+      status: 200,
+      path: './playwright/mocks/image_s.jpg',
+    });
+  });
+
+  await render(
+    <TokenEntity
+      token={{
+        type: 'ERC-20',
+        name: 'Duck Token',
+        symbol: 'DUCK',
+        address_hash: tokenMock.tokenInfo.address_hash,
+        icon_url: LOGO_URL,
+        reputation: 'scam',
+      }}
+    />,
+  );
   await expect(page).toHaveScreenshot();
 });
 

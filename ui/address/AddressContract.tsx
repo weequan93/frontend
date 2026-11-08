@@ -11,6 +11,7 @@ import useIsMobile from 'lib/hooks/useIsMobile';
 import getQueryParamString from 'lib/router/getQueryParamString';
 import useSocketChannel from 'lib/socket/useSocketChannel';
 import useSocketMessage from 'lib/socket/useSocketMessage';
+import type { Props as RoutedTabsProps } from 'toolkit/components/AdaptiveTabs/AdaptiveTabs';
 import RoutedTabs from 'toolkit/components/RoutedTabs/RoutedTabs';
 import { SECOND } from 'toolkit/utils/consts';
 
@@ -19,13 +20,13 @@ import ContractAutoVerificationStatus from './contract/ContractAutoVerificationS
 import useContractTabs from './contract/useContractTabs';
 import { CONTRACT_TAB_IDS } from './contract/utils';
 
-interface Props {
+interface Props extends Pick<RoutedTabsProps, 'leftSlot' | 'leftSlotProps'> {
   addressData: Address | undefined;
   isLoading?: boolean;
   hasMudTab?: boolean;
 }
 
-const AddressContract = ({ addressData, isLoading = false, hasMudTab }: Props) => {
+const AddressContract = ({ addressData, isLoading = false, hasMudTab, ...rest }: Props) => {
   const [ isQueryEnabled, setIsQueryEnabled ] = React.useState(false);
   const [ autoVerificationStatus, setAutoVerificationStatus ] = React.useState<TContractAutoVerificationStatus | null>(null);
 
@@ -51,7 +52,7 @@ const AddressContract = ({ addressData, isLoading = false, hasMudTab }: Props) =
 
   const contractTabs = useContractTabs({
     addressData,
-    isEnabled: isQueryEnabled,
+    isEnabled: isQueryEnabled && !isLoading,
     hasMudTab,
     channel,
   });
@@ -81,11 +82,7 @@ const AddressContract = ({ addressData, isLoading = false, hasMudTab }: Props) =
   useSocketMessage({ channel, event: 'smart_contract_was_verified', handler: handleContractWasVerifiedMessage });
   useSocketMessage({ channel, event: 'smart_contract_was_not_verified', handler: handleContractWasNotVerifiedMessage });
 
-  if (isLoading) {
-    return null;
-  }
-
-  const rightSlot = autoVerificationStatus ?
+  const rightSlot = autoVerificationStatus && !contractTabs.isPartiallyVerified ?
     <ContractAutoVerificationStatus status={ autoVerificationStatus } mode={ isMobile && contractTabs.tabs.length > 1 ? 'tooltip' : 'inline' }/> :
     null;
 
@@ -97,6 +94,7 @@ const AddressContract = ({ addressData, isLoading = false, hasMudTab }: Props) =
       isLoading={ contractTabs.isLoading }
       rightSlot={ rightSlot }
       rightSlotProps={{ ml: contractTabs.tabs.length > 1 ? { base: 'auto', md: 6 } : 0 }}
+      { ...rest }
     />
   );
 };

@@ -1,6 +1,8 @@
 import type { TokenInfo } from 'types/api/token';
+import type { ClusterChainConfig } from 'types/multichain';
 
 import config from 'configs/app';
+import { getTokenTypes } from 'lib/token/tokenTypes';
 
 export type ColumnsIds = 'tx_hash' | 'type' | 'method' | 'age' | 'from' | 'or_and' | 'to' | 'amount' | 'asset' | 'fee';
 
@@ -66,36 +68,31 @@ export const TABLE_COLUMNS: Array<TxTableColumn> = [
   },
 ] as const;
 
-export const ADVANCED_FILTER_TYPES = [
-  {
-    id: 'coin_transfer',
-    name: 'Coin Transfer',
-  },
-  {
-    id: 'ERC-20',
-    name: 'ERC-20',
-  },
-  {
-    id: 'ERC-404',
-    name: ' ERC-404',
-  },
-  {
-    id: 'ERC-721',
-    name: 'ERC-721',
-  },
-  {
-    id: 'ERC-1155',
-    name: 'ERC-1155',
-  },
-] as const;
-
-export const ADVANCED_FILTER_TYPES_WITH_ALL = [
-  {
-    id: 'all',
-    name: 'All',
-  },
-  ...ADVANCED_FILTER_TYPES,
-];
+export const getAdvancedFilterTypes = (chainConfig?: Array<ClusterChainConfig['app_config']> | ClusterChainConfig['app_config'], withAll = false) => {
+  return [
+    ...(withAll ? [ {
+      id: 'all',
+      name: 'All',
+    } ] : []),
+    {
+      id: 'coin_transfer',
+      name: 'Coin Transfer',
+    },
+    ...Object.entries(getTokenTypes(false, chainConfig))
+      .map(([ id, name ]) => ({
+        id,
+        name: `${ name } Transfer`,
+      })),
+    {
+      id: 'contract_creation',
+      name: 'Contract Creation',
+    },
+    {
+      id: 'contract_interaction',
+      name: 'Contract Interaction',
+    },
+  ];
+};
 
 export const NATIVE_TOKEN = {
   name: config.chain.currency.name || '',

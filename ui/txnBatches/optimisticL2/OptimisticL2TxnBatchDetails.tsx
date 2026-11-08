@@ -8,6 +8,7 @@ import { route } from 'nextjs-routes';
 
 import type { ResourceError } from 'lib/api/resources';
 import throwOnResourceLoadError from 'lib/errors/throwOnResourceLoadError';
+import { layerLabels } from 'lib/rollups/utils';
 import { Link } from 'toolkit/chakra/link';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import isCustomAppError from 'ui/shared/AppError/isCustomAppError';
@@ -19,6 +20,7 @@ import PrevNext from 'ui/shared/PrevNext';
 
 import OptimisticL2TxnBatchBlobCallData from './OptimisticL2TxnBatchBlobCallData';
 import OptimisticL2TxnBatchBlobCelestia from './OptimisticL2TxnBatchBlobCelestia';
+import OptimisticL2TxnBatchBlobEigenda from './OptimisticL2TxnBatchBlobEigenda';
 import OptimisticL2TxnBatchBlobEip4844 from './OptimisticL2TxnBatchBlobEip4844';
 
 interface Props {
@@ -61,7 +63,7 @@ const OptimisticL2TxnBatchDetails = ({ query }: Props) => {
     >
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Batch ID indicates the length of batches produced by grouping L3 blocks to be proven on L2"
+        hint={ `Batch ID indicates the length of batches produced by grouping ${ layerLabels.current } blocks to be proven on ${ layerLabels.parent }` }
       >
         Batch ID
       </DetailedInfo.ItemLabel>
@@ -81,7 +83,7 @@ const OptimisticL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Date and time at which batch is submitted to L2"
+        hint={ `Date and time at which batch is submitted to ${ layerLabels.parent }` }
       >
         Timestamp
       </DetailedInfo.ItemLabel>
@@ -109,7 +111,7 @@ const OptimisticL2TxnBatchDetails = ({ query }: Props) => {
 
       <DetailedInfo.ItemLabel
         isLoading={ isPlaceholderData }
-        hint="Number of L3 blocks in this batch"
+        hint={ `Number of ${ layerLabels.current } blocks in this batch` }
       >
         Blocks
       </DetailedInfo.ItemLabel>
@@ -141,6 +143,8 @@ const OptimisticL2TxnBatchDetails = ({ query }: Props) => {
         ) }
         { data.batch_data_container === 'in_celestia' && data.blobs &&
           <OptimisticL2TxnBatchBlobCelestia blobs={ data.blobs } isLoading={ isPlaceholderData }/> }
+        { data.batch_data_container === 'in_eigenda' && data.blobs &&
+          <OptimisticL2TxnBatchBlobEigenda blobs={ data.blobs } isLoading={ isPlaceholderData }/> }
       </DetailedInfo.ItemValue>
     </DetailedInfo.Container>
   );

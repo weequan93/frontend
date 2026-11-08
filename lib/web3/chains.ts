@@ -1,9 +1,18 @@
-import { type Chain } from 'viem';
+import type { Chain } from 'viem';
 
 import appConfig from 'configs/app';
+import essentialDappsChainsConfig from 'configs/essential-dapps-chains';
 import multichainConfig from 'configs/multichain';
 
-const getChainInfo = (config: typeof appConfig = appConfig) => {
+const getChainInfo = (
+  config: Partial<typeof appConfig> = appConfig,
+  contracts?: Chain['contracts'],
+  logoUrl?: string,
+): Chain | undefined => {
+  if (!config.chain || !config.app) {
+    return;
+  }
+
   return {
     id: Number(config.chain.id),
     name: config.chain.name ?? '',
@@ -24,10 +33,14 @@ const getChainInfo = (config: typeof appConfig = appConfig) => {
       },
     },
     testnet: config.chain.isTestnet,
+    contracts,
+    custom: {
+      logoUrl: logoUrl ?? config.UI?.navigation.icon.default,
+    },
   };
 };
 
-export const currentChain: Chain | undefined = !appConfig.features.opSuperchain.isEnabled ? getChainInfo() : undefined;
+export const currentChain: Chain | undefined = !appConfig.features.multichain.isEnabled ? getChainInfo() : undefined;
 
 export const parentChain: Chain | undefined = (() => {
   const rollupFeature = appConfig.features.rollup;
@@ -68,5 +81,30 @@ export const clusterChains: Array<Chain> | undefined = (() => {
     return;
   }
 
-  return config.chains.map(({ config }) => getChainInfo(config)).filter(Boolean);
+  return config.chains.map(({ app_config: config, logo }) => getChainInfo(config, undefined, logo)).filter(Boolean);
+})();
+
+export const essentialDappsChains: Array<Chain> | undefined = (() => {
+  const config = essentialDappsChainsConfig();
+
+  if (!config) {
+    return;
+  }
+
+  return config.chains.map(({ app_config: config, contracts, logo }) => getChainInfo(config, contracts, logo)).filter(Boolean);
+})();
+
+export const chains = (() => {
+  if (essentialDappsChains) {
+    const hasCurrentChain = essentialDappsChains.some((chain) => chain.id === currentChain?.id);
+    const hasParentChain = essentialDappsChains.some((chain) => chain.id === parentChain?.id);
+
+    return [
+      ...essentialDappsChains,
+      hasCurrentChain ? undefined : currentChain,
+      hasParentChain ? undefined : parentChain,
+    ].filter(Boolean);
+  }
+
+  return [ currentChain, parentChain, ...(clusterChains ?? []) ].filter(Boolean);
 })();

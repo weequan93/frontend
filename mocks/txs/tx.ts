@@ -1,9 +1,13 @@
 /* eslint-disable max-len */
+import type { RpcTransactionReceipt } from 'viem';
+
+import type { AddressParam } from 'types/api/addressParams';
 import type { Transaction } from 'types/api/transaction';
 
 import * as addressMock from 'mocks/address/address';
 import { publicTag, privateTag, watchlistName } from 'mocks/address/tag';
 import * as interopMock from 'mocks/interop/interop';
+import { protocolTag } from 'mocks/metadata/address';
 import * as tokenTransferMock from 'mocks/tokens/tokenTransfer';
 import * as decodedInputDataMock from 'mocks/txs/decodedInputData';
 
@@ -18,6 +22,7 @@ export const base: Transaction = {
   created_contract: null,
   decoded_input: decodedInputDataMock.withoutIndexedFields,
   exchange_rate: '0.00254428',
+  historic_exchange_rate: '0.00254428',
   fee: {
     type: 'actual',
     value: '7143168000000000',
@@ -86,6 +91,27 @@ export const withWatchListNames: Transaction = {
     ...base.to,
     watchlist_names: [ { label: 'to #1', display_name: 'to utka' } ],
   } as Transaction['to'],
+};
+
+export const withProtocolTag: Transaction = {
+  ...base,
+  hash: '0x62d597ebcf3e8d60096dd0363bc2f0f5e2df27ba1dacd696c51aa7c9409f3194',
+  to: {
+    ...(base.to as AddressParam),
+    metadata: {
+      tags: [ protocolTag ],
+      reputation: null,
+    },
+    private_tags: [],
+    watchlist_names: [],
+    public_tags: [],
+  },
+};
+
+export const withPendingUpdate: Transaction = {
+  ...withProtocolTag,
+  hash: '0x62d597ebcf3e8d60096dd0363bc2f0f5e2df27ba1dacd696c51aa7c9409f3133',
+  is_pending_update: true,
 };
 
 export const withContractCreation: Transaction = {
@@ -278,6 +304,7 @@ export const l2tx: Transaction = {
   l1_fee_scalar: '1.0',
   l1_gas_used: '17060',
   l1_fee: '1584574188135760',
+  operator_fee: '2769347953',
 };
 
 export const stabilityTx: Transaction = {
@@ -306,6 +333,7 @@ export const stabilityTx: Transaction = {
       symbol: 'GAS',
       total_supply: '10000000000000000000000000',
       type: 'ERC-20',
+      reputation: 'ok',
     },
     total_fee: '68762500000000',
     validator_address: {
@@ -337,6 +365,7 @@ export const celoTxn: Transaction = {
       symbol: 'cUSD',
       total_supply: '7145754483836626799435133',
       type: 'ERC-20',
+      reputation: 'ok',
     },
   },
 };
@@ -449,4 +478,21 @@ export const withInteropOutMessage: Transaction = {
     status: 'Sent',
     target_address_hash: addressMock.hash,
   } ],
+};
+
+export const rpcTxReceipt: RpcTransactionReceipt = {
+  blockHash: '0xa737203aac9f38b5355c716f46b84ff1031335d1a99b2366900378c9e4c837a5',
+  blockNumber: '0x171f82b',
+  contractAddress: null,
+  cumulativeGasUsed: '0xe235b',
+  effectiveGasPrice: '0x793b22f4',
+  from: '0x21dc71ddd3558cd7536bb5fa422303fb5559ea63',
+  gasUsed: '0x215d2',
+  logs: [],
+  logsBloom: '0x00400040000000000000000000000000000000000000000010000000000000000000000020000000001000000000010400000000000000000000000000000000000400000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010100000000000002801000000000000000000000000000000000000000000000000100000000004000000000000000080100000000000000000000000000000000000000000000802000000000000000000000000000000400000000000000000000000000000000000000000000000000000000004000000800000000000004000000000',
+  status: 'success' as RpcTransactionReceipt['status'],
+  to: '0xbd216513d74c8cf14cf4747e6aaa6420ff64ee9e',
+  transactionHash: '0xc39cf2777f03346deba8659b3ff652bbcf3dcbd4fcf846a248a171e45cac94b2',
+  transactionIndex: '0x2',
+  type: '0x2',
 };

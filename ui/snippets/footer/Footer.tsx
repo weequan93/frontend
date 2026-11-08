@@ -7,86 +7,59 @@ import type { CustomLinksGroup } from 'types/footerLinks';
 
 import config from 'configs/app';
 import type { ResourceError } from 'lib/api/resources';
-import useApiQuery from 'lib/api/useApiQuery';
 import useFetch from 'lib/hooks/useFetch';
-import useIssueUrl from 'lib/hooks/useIssueUrl';
 import { Link } from 'toolkit/chakra/link';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { copy } from 'toolkit/utils/htmlEntities';
-import IconSvg from 'ui/shared/IconSvg';
 import { CONTENT_MAX_WIDTH } from 'ui/shared/layout/utils';
 import NetworkAddToWallet from 'ui/shared/NetworkAddToWallet';
+import NetworkLogo from 'ui/snippets/networkLogo/NetworkLogo';
 
 import FooterLinkItem from './FooterLinkItem';
 import IntTxsIndexingStatus from './IntTxsIndexingStatus';
-import getApiVersionUrl from './utils/getApiVersionUrl';
 
 const MAX_LINKS_COLUMNS = 4;
 
-const FRONT_VERSION_URL = `https://github.com/blockscout/frontend/tree/${ config.UI.footer.frontendVersion }`;
-const FRONT_COMMIT_URL = `https://github.com/blockscout/frontend/commit/${ config.UI.footer.frontendCommit }`;
+const DERIW_LINKS = [
+  {
+    icon: 'globe' as const,
+    iconSize: '20px',
+    text: 'DeriW website',
+    url: 'https://www.deriw.com',
+  },
+  {
+    icon: 'docs' as const,
+    iconSize: '20px',
+    text: 'Docs',
+    url: 'https://docs.deriw.com/',
+  },
+  {
+    icon: 'social/twitter' as const,
+    iconSize: '24px',
+    text: 'X',
+    url: 'https://x.com/DeriWOfficial',
+  },
+  {
+    icon: 'social/telega' as const,
+    iconSize: '20px',
+    text: 'Telegram',
+    url: 'https://t.me/deriwfinance',
+  },
+  {
+    icon: 'social/discord' as const,
+    iconSize: '24px',
+    text: 'Discord',
+    url: 'https://discord.gg/deriwofficial',
+  },
+  {
+    icon: 'social/medium_filled' as const,
+    iconSize: '20px',
+    text: 'Blog',
+    url: 'https://medium.com/@DeriwFi',
+  },
+];
 
 const Footer = () => {
-
-  const { data: backendVersionData } = useApiQuery('general:config_backend_version', {
-    queryOptions: {
-      staleTime: Infinity,
-      enabled: !config.features.opSuperchain.isEnabled,
-    },
-  });
-  const apiVersionUrl = getApiVersionUrl(backendVersionData?.backend_version);
-  const issueUrl = useIssueUrl(backendVersionData?.backend_version);
-
-  const BLOCKSCOUT_LINKS = [
-    {
-      icon: 'edit' as const,
-      iconSize: '16px',
-      text: 'Submit an issue',
-      url: issueUrl,
-    },
-    {
-      icon: 'social/git' as const,
-      iconSize: '18px',
-      text: 'Contribute',
-      url: 'https://github.com/blockscout/blockscout',
-    },
-    {
-      icon: 'social/twitter' as const,
-      iconSize: '18px',
-      text: 'X (ex-Twitter)',
-      url: 'https://x.com/blockscout',
-    },
-    {
-      icon: 'social/discord' as const,
-      iconSize: '24px',
-      text: 'Discord',
-      url: 'https://discord.gg/blockscout',
-    },
-    {
-      icon: 'brands/blockscout' as const,
-      iconSize: '18px',
-      text: 'All chains',
-      url: 'https://www.blockscout.com/chains-and-projects',
-    },
-    {
-      icon: 'donate' as const,
-      iconSize: '20px',
-      text: 'Donate',
-      url: 'https://eth.blockscout.com/address/0xfB4aF6A8592041E9BcE186E5aC4BDbd2B137aD11',
-    },
-  ];
-
-  const frontendLink = (() => {
-    if (config.UI.footer.frontendVersion) {
-      return <Link href={ FRONT_VERSION_URL } target="_blank">{ config.UI.footer.frontendVersion }</Link>;
-    }
-
-    if (config.UI.footer.frontendCommit) {
-      return <Link href={ FRONT_COMMIT_URL } target="_blank">{ config.UI.footer.frontendCommit }</Link>;
-    }
-
-    return null;
-  })();
 
   const fetch = useFetch();
 
@@ -103,55 +76,34 @@ const Footer = () => {
   const renderNetworkInfo = React.useCallback((gridArea?: GridProps['gridArea']) => {
     return (
       <Flex
+        alignItems="center"
         gridArea={ gridArea }
         flexWrap="wrap"
-        columnGap={ 8 }
-        rowGap={ 6 }
+        justifyContent="flex-start"
+        columnGap={ 3 }
+        rowGap={ 2 }
         mb={{ base: 5, lg: 10 }}
         _empty={{ display: 'none' }}
       >
         { !config.UI.indexingAlert.intTxs.isHidden && <IntTxsIndexingStatus/> }
-        <NetworkAddToWallet/>
+        { !config.features.multichain.isEnabled && <NetworkAddToWallet source="Footer"/> }
       </Flex>
     );
   }, []);
 
   const renderProjectInfo = React.useCallback((gridArea?: GridProps['gridArea']) => {
-    const logoColor = { base: 'blue.600', _dark: 'white' };
-
     return (
       <Box gridArea={ gridArea }>
-        <Flex columnGap={ 2 } textStyle="xs" alignItems="center">
-          <span>Made with</span>
-          <Link href="https://www.blockscout.com" target="_blank" display="inline-flex" color={ logoColor } _hover={{ color: logoColor }}>
-            <IconSvg
-              name="networks/logo-placeholder"
-              width="80px"
-              height={ 4 }
-            />
-          </Link>
-        </Flex>
-        <Text mt={ 3 } fontSize="xs">
-          Blockscout is a tool for inspecting and analyzing EVM based blockchains. Blockchain explorer for Ethereum Networks.
+        <NetworkLogo display="inline-flex" fallback={ <Text fontSize="lg" fontWeight={ 700 }>DeriW</Text> }/>
+        <Text mt={ 3 } fontSize="xs" maxW="360px">
+          DeriW is a decentralized perpetual exchange offering gas-free on-chain trading.
         </Text>
-        <Box mt={ 6 } alignItems="start" textStyle="xs">
-          { apiVersionUrl && (
-            <Text>
-              Backend: <Link href={ apiVersionUrl } target="_blank">{ backendVersionData?.backend_version }</Link>
-            </Text>
-          ) }
-          { frontendLink && (
-            <Text>
-              Frontend: { frontendLink }
-            </Text>
-          ) }
-          <Text>
-            Copyright { copy } Blockscout Limited 2023-{ (new Date()).getFullYear() }
-          </Text>
-        </Box>
+        <Text mt={ 6 } textStyle="xs">
+          { copy } { (new Date()).getFullYear() } DeriW. All rights reserved.
+        </Text>
       </Box>
     );
-  }, [ apiVersionUrl, backendVersionData?.backend_version, frontendLink ]);
+  }, []);
 
   const containerProps: HTMLChakraProps<'div'> = {
     as: 'footer',
@@ -206,7 +158,7 @@ const Footer = () => {
           >
             {
               ([
-                { title: 'Blockscout', links: BLOCKSCOUT_LINKS },
+                { title: 'DeriW', links: DERIW_LINKS },
                 ...(linksData || []),
               ])
                 .slice(0, colNum)
@@ -246,21 +198,17 @@ const Footer = () => {
           gridArea={{ lg: 'links-bottom' }}
           gap={ 1 }
           gridTemplateColumns={{
-            base: 'repeat(auto-fill, 160px)',
-            lg: 'repeat(2, 160px)',
+            base: 'repeat(2, minmax(0, 1fr))',
+            lg: 'repeat(3, 135px)',
             xl: 'repeat(3, 160px)',
           }}
-          gridTemplateRows={{
-            base: 'auto',
-            lg: 'repeat(3, auto)',
-            xl: 'repeat(2, auto)',
-          }}
+          gridTemplateRows={{ base: 'repeat(3, auto)', lg: 'repeat(2, auto)' }}
           gridAutoFlow={{ base: 'row', lg: 'column' }}
           alignContent="start"
           justifyContent={{ lg: 'flex-end' }}
           mt={{ base: 8, lg: 0 }}
         >
-          { BLOCKSCOUT_LINKS.map(link => <FooterLinkItem { ...link } key={ link.text }/>) }
+          { DERIW_LINKS.map(link => <FooterLinkItem { ...link } key={ link.text }/>) }
         </Grid>
       </Grid>
     </Box>

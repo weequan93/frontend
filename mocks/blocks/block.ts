@@ -133,6 +133,7 @@ export const base2: Block = {
       type: 'Emission Reward',
     },
   ],
+  is_pending_update: true,
 };
 
 export const rootstock: Block = {
@@ -217,7 +218,7 @@ export const withBlobTxs: Block = {
   blob_gas_used: '393216',
   burnt_blob_fees: '8461393325064192',
   excess_blob_gas: '79429632',
-  blob_transaction_count: 1,
+  blob_transactions_count: 1,
 };
 
 export const withWithdrawals: Block = {

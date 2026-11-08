@@ -7,8 +7,8 @@ import { route } from 'nextjs-routes';
 import { Link } from 'toolkit/chakra/link';
 import { Skeleton } from 'toolkit/chakra/skeleton';
 import { Hint } from 'toolkit/components/Hint/Hint';
+import { TruncatedText } from 'toolkit/components/truncation/TruncatedText';
 import IconSvg, { type IconName } from 'ui/shared/IconSvg';
-import TruncatedValue from 'ui/shared/TruncatedValue';
 
 export type Props = {
   className?: string;
@@ -24,6 +24,7 @@ export type Props = {
   period?: '1h' | '24h' | '30min';
   href?: Route;
   icon?: IconName;
+  isFallback?: boolean;
 };
 
 const Container = ({ href, children, className }: { href?: Route; children: React.JSX.Element; className?: string }) => {
@@ -52,6 +53,7 @@ const StatsWidget = ({
   diffFormatted,
   period,
   href,
+  isFallback,
 }: Props) => {
   return (
     <Container href={ !isLoading ? href : undefined } className={ href ? className : undefined }>
@@ -75,9 +77,15 @@ const StatsWidget = ({
             borderRadius="base"
             display={{ base: 'none', lg: 'block' }}
             flexShrink={ 0 }
+            opacity={ isFallback && !isLoading ? 'control.disabled' : 1 }
           />
         ) }
-        <Box w={{ base: '100%', lg: icon ? 'calc(100% - 48px)' : '100%' }}>
+        <Box
+          w={{
+            base: `calc(100% - ${ hint ? '24px' : '0px' })`,
+            lg: `calc(100% - ${ icon ? '48px' : '0px' } - ${ hint ? '24px' : '0px' })`,
+          }}
+        >
           <Skeleton
             loading={ isLoading }
             color="text.secondary"
@@ -92,10 +100,11 @@ const StatsWidget = ({
             alignItems="baseline"
             fontWeight={ 500 }
             textStyle="heading.md"
+            opacity={ isFallback && !isLoading ? 'control.disabled' : 1 }
           >
             { valuePrefix && <chakra.span whiteSpace="pre">{ valuePrefix }</chakra.span> }
             { typeof value === 'string' ? (
-              <TruncatedValue isLoading={ isLoading } value={ value }/>
+              <TruncatedText text={ value } loading={ isLoading }/>
             ) : (
               value
             ) }
@@ -112,7 +121,7 @@ const StatsWidget = ({
           </Skeleton>
         </Box>
         { typeof hint === 'string' ? (
-          <Skeleton loading={ isLoading } alignSelf="center" borderRadius="base">
+          <Skeleton loading={ isLoading } alignSelf="center" borderRadius="base" flexShrink={ 0 }>
             <Hint label={ hint } boxSize={ 5 } color="icon.secondary"/>
           </Skeleton>
         ) : hint }

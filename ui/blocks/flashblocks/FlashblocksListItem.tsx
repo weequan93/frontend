@@ -8,6 +8,7 @@ import { route } from 'nextjs-routes';
 import { Link } from 'toolkit/chakra/link';
 import FlashblockEntity from 'ui/shared/entities/flashblock/FlashblockEntity';
 import ListItemMobile from 'ui/shared/ListItemMobile/ListItemMobile';
+import Time from 'ui/shared/time/Time';
 
 interface Props {
   data: FlashblockItem;
@@ -25,6 +26,12 @@ const FlashblocksListItem = ({ data }: Props) => {
           />
         ) : <Text color="text.secondary">N/A</Text> }
       </Flex>
+      { data.timestamp && (
+        <Flex columnGap={ 2 }>
+          <Text fontWeight={ 500 }>Timestamp</Text>
+          <Time color="text.secondary" timestamp={ data.timestamp } format="DD MMM, HH:mm:ss.SSS"/>
+        </Flex>
+      ) }
       <Flex columnGap={ 2 }>
         <Text fontWeight={ 500 }>Txn</Text>
         { data.transactions_count > 0 ? (

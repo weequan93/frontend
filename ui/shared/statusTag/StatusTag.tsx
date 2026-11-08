@@ -11,15 +11,14 @@ export type StatusTagType = 'ok' | 'error' | 'pending';
 
 export interface Props extends BadgeProps {
   type: 'ok' | 'error' | 'pending';
-  text: string;
+  text?: string;
   errorText?: string | null;
+  mode?: 'compact' | 'full';
 }
 
-const StatusTag = ({ type, text, errorText, ...rest }: Props) => {
+const StatusTag = ({ type, text, errorText, mode = 'full', ...rest }: Props) => {
   let icon: IconName;
   let colorPalette: BadgeProps['colorPalette'];
-
-  const capitalizedText = capitalizeFirstLetter(text);
 
   switch (type) {
     case 'ok':
@@ -36,11 +35,29 @@ const StatusTag = ({ type, text, errorText, ...rest }: Props) => {
       break;
   }
 
-  const startElement = <IconSvg name={ icon } boxSize={ 2.5 }/>;
+  const iconElement = <IconSvg name={ icon } boxSize={ 2.5 } display={ text ? 'inline-block' : 'block' }/>;
+  const capitalizedText = text ? capitalizeFirstLetter(text) : undefined;
+
+  if (mode === 'compact') {
+    const tooltipContent = errorText || capitalizedText;
+    return (
+      <Tooltip content={ tooltipContent } disabled={ !tooltipContent }>
+        <Badge colorPalette={ colorPalette } startElement={ iconElement } px="7px" { ...rest }/>
+      </Tooltip>
+    );
+  }
+
+  if (!text) {
+    return (
+      <Badge colorPalette={ colorPalette } { ...rest }>
+        { iconElement }
+      </Badge>
+    );
+  }
 
   return (
     <Tooltip content={ errorText } disabled={ !errorText }>
-      <Badge colorPalette={ colorPalette } startElement={ startElement } { ...rest }>
+      <Badge colorPalette={ colorPalette } startElement={ iconElement } { ...rest }>
         { capitalizedText }
       </Badge>
     </Tooltip>
