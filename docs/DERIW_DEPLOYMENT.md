@@ -72,3 +72,19 @@ interchangeable with the already qualified image.
 For a different server, configure its own chain/API/RPC/branding inputs and
 backend inventory. The existing dev private journals and fixed data paths are
 not reusable installation templates.
+
+## command
+
+docker buildx build \
+  --platform linux/amd64 \
+  --build-arg GIT_COMMIT_SHA="$(git rev-parse HEAD)" \
+  --build-arg GIT_TAG="$(git describe --tags --always)" \
+  -t YOUR_USERNAME/blockscout-frontend:deriw-$(git rev-parse --short HEAD) \
+  --push .
+
+docker buildx build \
+  --platform linux/amd64 \
+  --build-arg GIT_COMMIT_SHA="$(git rev-parse HEAD)" \
+  --build-arg GIT_TAG="$(git describe --tags --always)" \
+  -t YOUR_USERNAME/blockscout-frontend:deriw-v2.7.2 \
+  --push .
